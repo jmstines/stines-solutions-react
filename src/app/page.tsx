@@ -19,7 +19,7 @@ export default function Home() {
         <h1 className="heading-primary home-hero__heading-primary">
           <span className="heading-primary__sm"> Hello 👋</span>
           <span className="heading-primary__main">
-            I'm jeffrey Stines! A Software Engineer Building Awesome Webapps And Websites That Power The Internet
+            I am jeffrey Stines! A Software Engineer Building Awesome Webapps And Websites That Power The Internet
           </span>
         </h1>
         <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left space-x-3 mt-6">
