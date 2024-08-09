@@ -1,0 +1,56 @@
+ul {
+    list-style: none;
+}
+
+.about {
+    background: rgb(252, 252, 252);
+}
+
+.about__info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 8rem;
+}
+
+@media (max-width: 37.5em) {
+.about__info {
+    grid-template-columns: 1fr;
+    grid-gap: 6rem;
+}
+
+.about__btn-theme {
+    width: 70%;
+}
+}
+
+.about__main-info {
+    margin-bottom: 4rem;
+}
+
+.about__text-primary {
+    margin-bottom: 4rem;
+}
+
+.about__info-heading {
+    margin-bottom: 3rem;
+    color: #555;
+}
+
+.about__skills {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.about__skill {
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 1.5rem 2rem;
+    margin-right: 2rem;
+    margin-bottom: 2rem;
+
+    background: #eee;
+    color: #666;
+    border-radius: 5px;
+    font-weight: 500;
+}
