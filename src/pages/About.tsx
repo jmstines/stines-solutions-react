@@ -1,10 +1,11 @@
 import './About.css'
+import './_pageStyles.css'
 
 export default function About() {
     return (
-    <div  id="about" className="about__info main-container">
+    <div  id="about-main" className="about__info">
         <div className="about__main-info">
-            <h3 className="heading-quaternary about__heading-quaternary">
+            <h3 className="heading-quaternary">
                 My Story
             </h3>
             <p className="text-primary about__text-primary">
@@ -39,7 +40,7 @@ export default function About() {
             </p>
         </div>
         <div className="about__skill-info">
-            <h3 className="heading-quaternary about__heading-quaternary">
+            <h3 className="heading-quaternary">
                 My Skills
             </h3>
             <ul className="about__skills">

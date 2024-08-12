@@ -1,0 +1,43 @@
+.main-section__content {
+    margin-top: 4rem;
+}
+
+.projects__list {
+    display: grid;
+}
+
+.projects__list-item {
+    display: grid;
+    grid-template-columns: 45%;
+    grid-gap: 4rem;
+    margin-bottom: 8rem;
+}
+
+@media (max-width: 75em) {
+    .projects__list-item {
+        grid-template-columns: 60%;
+    }
+}
+
+.projects__list-item-img {
+    width: 100%;
+    display: block;
+}
+
+.projects__btn-theme {
+    margin-right: 2rem;
+}
+
+.projects__list-item-text-primary {
+    margin-bottom: 4rem;
+}
+
+.projects__list-item-heading-tertiary {
+    margin: 4rem 0 2rem 0;
+}
+
+.projects__list-item-img-cont {
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+ 

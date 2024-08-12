@@ -1,9 +1,10 @@
 import './Contact.css'
+// import './_pageStyles.css'
 
 export default function Contact() {
     return (
-        <div  id="about" className="main-container">
-            <h3 className="heading-quaternary about__heading-quaternary">
+        <div  id="contact-main">
+            <h3 className="heading-quaternary">
                 Contact
             </h3>
             <span className="heading-secondary">

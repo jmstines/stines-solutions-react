@@ -1,0 +1,54 @@
+.heading-quaternary {
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    color: #000;
+    font-weight: 400;
+    margin-bottom: 3rem;
+}
+
+.heading-tertiary {
+    font-size: 3.4rem;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    color: #000;
+    font-weight: 400;
+}
+
+.heading-secondary {
+    font-size: 2rem;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    color: #000;
+    font-weight: 400;
+}
+
+.text-primary {
+    font-size: 1.9rem;
+    color: #444;
+    line-height: 1.6;
+}
+
+.btn {
+    font-family: inherit;
+    letter-spacing: 1px;
+    font-weight: 700;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    padding: 1.8rem 4rem;
+    font-size: 1.8rem;
+    border-radius: 5px;
+    border: 2px solid rgba(var(--themeColor), 1);
+}
+
+.btn-theme {
+    background: rgba(var(--themeColor), 1);
+    color: #fff;
+    box-shadow: 0 5px 15px 0 rgb(0 0 0 / 15%);
+}
+
+.btn-inv {
+    color: rgba(var(--themeColor), 1);
+    background: #fff;
+}

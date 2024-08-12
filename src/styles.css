@@ -53,6 +53,13 @@ body {
   max-width: 120rem;
   margin: auto;
   width: 90%;
+  margin-top: 5rem;
+}
+
+.nav-container {
+  max-width: 120rem;
+  margin: auto;
+  width: 90%;
 }
 
 .nav-top-main {
@@ -119,14 +126,4 @@ body {
   margin-bottom: 0;
 }
 
-.heading-quaternary {
-  font-size: 2.5rem;
-  letter-spacing: 1px;
-  line-height: 1.3;
-  color: #000;
-  font-weight: 400;
-}
 
-.about__heading-quaternary {
-  margin-bottom: 3rem;
-}

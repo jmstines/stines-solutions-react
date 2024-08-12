@@ -1,3 +1,5 @@
+import './_pageStyles.css'
+
 export default function Home() {
-  return <h1>Hello World</h1>;
+  return <h3 className="heading-quaternary">Hello World</h3>;
 }
