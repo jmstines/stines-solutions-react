@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]  
   pull_request:
     branches: [ "master" ]
-    
+
   workflow_dispatch:
 
 jobs:
@@ -28,10 +28,13 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Init
+        working-directory: ./infrastructure
         run: terraform init
 
       - name: Terraform Plan
+        working-directory: ./infrastructure
         run: terraform plan
 
       - name: Terraform Apply
+        working-directory: ./infrastructure
         run: terraform apply -auto-approve
