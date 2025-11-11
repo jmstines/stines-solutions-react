@@ -25,10 +25,7 @@ jobs:
 
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List full path and file names in the /dist folder
-        run: find ${{ github.workspace }}/dist -type f
-      - run: echo "🍏 This job's status is ${{ job.status }}."
-
+      
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
@@ -40,6 +37,10 @@ jobs:
 
       - name: Build project
         run: npm run build   # This creates the /dist folder
+
+      - name: List full path and file names in the /dist folder
+        run: find ${{ github.workspace }}/dist -type f
+      - run: echo "🍏 This job's status is ${{ job.status }}."
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
