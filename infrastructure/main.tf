@@ -92,49 +92,50 @@ resource "aws_route53_record" "redirect_site" {
   records = ["stinessolutions.com.s3-website-us-east-1.amazonaws.com"]
 }
 
-resource "aws_cloudfront_distribution" "website_cdn" {
-  origin {
-    domain_name = aws_s3_bucket.website.website_endpoint
-    origin_id   = "s3-origin"
+# Add back after aws account is verified
+# resource "aws_cloudfront_distribution" "website_cdn" {
+#   origin {
+#     domain_name = aws_s3_bucket.website.website_endpoint
+#     origin_id   = "s3-origin"
 
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
+#     custom_origin_config {
+#       http_port              = 80
+#       https_port             = 443
+#       origin_protocol_policy = "http-only"
+#       origin_ssl_protocols   = ["TLSv1.2"]
+#     }
+#   }
   
-  restrictions {
-    geo_restriction {
-        restriction_type = "whitelist" # or "blacklist"
-        locations        = ["US"]      # Only allow U.S.
-      }
-  }
+#   restrictions {
+#     geo_restriction {
+#         restriction_type = "whitelist" # or "blacklist"
+#         locations        = ["US"]      # Only allow U.S.
+#       }
+#   }
 
-  enabled             = true
-  is_ipv6_enabled     = true
-  default_root_object = "index.html"
+#   enabled             = true
+#   is_ipv6_enabled     = true
+#   default_root_object = "index.html"
 
-  aliases = ["stinessolutions.com", "www.stinessolutions.com"]
+#   aliases = ["stinessolutions.com", "www.stinessolutions.com"]
 
-  viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.cert.arn
-    ssl_support_method             = "sni-only"
-    minimum_protocol_version       = "TLSv1.2_2021"
-  }
+#   viewer_certificate {
+#     acm_certificate_arn            = aws_acm_certificate.cert.arn
+#     ssl_support_method             = "sni-only"
+#     minimum_protocol_version       = "TLSv1.2_2021"
+#   }
 
-  default_cache_behavior {
-    allowed_methods        = ["GET", "HEAD"]
-    cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "s3-origin"
-    viewer_protocol_policy = "redirect-to-https"
+#   default_cache_behavior {
+#     allowed_methods        = ["GET", "HEAD"]
+#     cached_methods         = ["GET", "HEAD"]
+#     target_origin_id       = "s3-origin"
+#     viewer_protocol_policy = "redirect-to-https"
 
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-  }
-}
+#     forwarded_values {
+#       query_string = false
+#       cookies {
+#         forward = "none"
+#       }
+#     }
+#   }
+# }
