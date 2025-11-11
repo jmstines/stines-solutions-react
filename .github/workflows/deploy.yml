@@ -1,11 +1,12 @@
 
 name: Deploy to S3
 
-on:
-  push:
-    branches: [ "master" ]  
-  pull_request:
-    branches: [ "master" ]      
+on:  
+  # runs after the "Terraform Deploy" workflow is completed
+  workflow_run:
+      workflows: ["Terraform Deploy"] 
+      types:
+        - completed
 
 jobs:
   deploy:
