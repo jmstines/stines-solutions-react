@@ -3,79 +3,94 @@ import './_pageStyles.css'
 
 export default function About() {
     return (
-    <div  id="about-main" className="about__info">
-        <div className="about__main-info">
-            <h3 className="heading-quaternary">
-                My Story
-            </h3>
-            <p className="text-primary about__text-primary">
-                <span>
-                    Hi there! I'm a seasoned software engineer with a passion for problem solving.
-                    I started my career as a Mechanical Engineering Designer where I designed 
-                    complex mecanical systems ranging from fall protection systems to ice delievery 
-                    systems for nuclear power plants. I started reteaching myself software development
-                    back in 2014. That has been an ongoing process that I like to think I have gotten 
-                    very good at. I have always been a problem solver from the first lego kit 
-                    I recieved as a kid, to the first PC I build from scratch, to the time I took apart
-                    and repaired my washing machine in college.
-                </span>
-                <span>
-                    I have worked for several very interesting companies in different industries.
-                    I supported factory floor applications, lab personal and data collection, 
-                    healthcare operations, and SAAS billing infrasructure.  After transitioning to 
-                    software development I began the journey of learning everything I could to became 
-                    a Senior Developer and lead Developer.  and led
-                    or participated in projects involving legacy application retirement and
-                    migration, single-page application development, custom docker image creation,
-                    and external customer facing web sites.
-                </span>
-                <span>
-                    Currently, I'm working on a SaaS
-                    billing system using **C#, Typescript, AWS, Lambda, DynamoDB, and Terraform**.
-                    This role allows me to further expand my technical skills while contributing
-                    to a critical part of the business. In my spare time, I attend meetup and tinker
-                    on on side projects that help me explore new technologies and methodologies and 
-                    stay updated and relevant in this ever-evolving industry.
-                </span>
-            </p>
+        <div id="about-main" className="about__info">
+            <div className="about__main-info">
+                <h3 className="heading-quaternary">
+                    My Story
+                </h3>         
+                <p className="text-primary about__text-primary">
+                    <span>
+                        Hi there! I’m a seasoned software engineer with a lifelong passion for solving problems. My career began in mechanical engineering, where I designed complex systems—from fall protection solutions to ice delivery mechanisms for nuclear power plants.
+                    </span>
+                    <span>
+                        In 2014, I transitioned into software development, driven by curiosity and a desire to build innovative solutions. Since then, I’ve worked across diverse industries—manufacturing, healthcare, and SaaS—delivering impactful projects that improve efficiency and scalability.
+                    </span>
+                    <span>
+                        <h4 className="heading-secondary">Some Highlights</h4>
+                        <ul className="about__highlights text-primary">
+                        <li>
+                            Consolidating five billing systems into one using AWS Lambda, DynamoDB, and API Gateway, reducing costs to near zero while improving accuracy and reliability.
+                        </li>
+                        <li>
+                            Designing a configurable .NET Core data import application that automated manual processes, saving hours of work.
+                        </li>
+                        <li>
+                            Creating a custom Docker solution for local SQL testing, streamlining developer workflows.
+                        </li>
+                        </ul>
+                    </span>
+                    <span>
+                        Today, I’m focused on building a robust SaaS billing system using C#, TypeScript, AWS, and Terraform—a role that challenges me to grow while delivering critical business value. Outside of work, I’m an active member and presenter at the Raleigh Triangle .NET User Group (TriNUG) and enjoy exploring new technologies through side projects.
+                    </span>
+                </p>
+            </div>
+            <div>
+                <h3 className="heading-quaternary">
+                    My Skills
+                </h3>
+                <div >
+                    <h3 className="heading-secondary">Languages & Frameworks</h3>
+                    <div>
+                        <ul className="about__skills">
+                            <li className="about__skill">C#</li>
+                            <li className="about__skill">.NET Core</li>
+                            <li className="about__skill">SQL</li>
+                            <li className="about__skill">JavaScript</li>
+                            <li className="about__skill">TypeScript</li>
+                            <li className="about__skill">Node.js</li>
+                            <li className="about__skill">Vue.js</li>
+                            <li className="about__skill">React</li>
+                            <li className="about__skill">AngularJS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className="heading-secondary">Cloud & Infrastructure</h3>
+                        <ul className="about__skills">
+                            <li className="about__skill">AWS (Lambda, DynamoDB, API Gateway, CloudWatch, Secrets Manager, SQS)</li>
+                            <li className="about__skill">Azure</li>
+                            <li className="about__skill">Terraform</li>
+                            <li className="about__skill">Docker</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className="heading-secondary">Tools & IDEs</h3>
+                        <ul className="about__skills">
+                            <li className="about__skill">Git</li>
+                            <li className="about__skill">Bash</li>
+                            <li className="about__skill">NVM</li>
+                            <li className="about__skill">Visual Studio</li>
+                            <li className="about__skill">VS Code</li>
+                            <li className="about__skill">Rider</li>
+                            <li className="about__skill">Postman</li>
+                            <li className="about__skill">LINQPad</li>
+                            <li className="about__skill">SSMS</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className="heading-secondary">Monitoring & Logging</h3>
+                        <ul className="about__skills">
+                            <li className="about__skill">Splunk</li>
+                            <li className="about__skill">New Relic</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 className="heading-secondary">Operating Systems</h3>
+                        <ul className="about__skills">
+                            <li className="about__skill">Linux</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div className="about__skill-info">
-            <h3 className="heading-quaternary">
-                My Skills
-            </h3>
-            <ul className="about__skills">
-                <li className="about__skill">C#</li>
-                <li className="about__skill">.Net Core</li>
-                <li className="about__skill">SQL</li>
-                <li className="about__skill">Typescript</li>
-                <li className="about__skill">Node</li>
-                <li className="about__skill">NVM</li>
-                <li className="about__skill">Bash</li>
-                <li className="about__skill">git</li>
-                <li className="about__skill">Terraform</li>
-                <li className="about__skill">Vue</li>
-                <li className="about__skill">React</li>
-                <li className="about__skill">Visual Studio</li>
-                <li className="about__skill">VS Code</li>
-                <li className="about__skill">Rider</li>
-                <li className="about__skill">Postman</li>
-                <li className="about__skill">LinkPad</li>
-                <li className="about__skill">SSMS</li>
-                <li className="about__skill">AWS Lambda</li>
-                <li className="about__skill">AWS DynamoDB</li>
-                <li className="about__skill">AWS API Gateway</li>
-                <li className="about__skill">AWS Cloud Watch</li>
-                <li className="about__skill">AWS Secrets Manager</li>
-                <li className="about__skill">AWS SQS</li>
-                <li className="about__skill">Azure</li>
-                <li className="about__skill">Splunk</li>
-                <li className="about__skill">New Relic</li>
-                <li className="about__skill">Docker</li>
-                <li className="about__skill">linux</li>
-                <li className="about__skill">javascript</li>
-                <li className="about__skill">AngularJS</li> 
-            </ul>
-        </div>
-    </div>
-  );
+    );
 }

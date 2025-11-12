@@ -54,3 +54,12 @@ ul {
     border-radius: 5px;
     font-weight: 500;
 }
+
+.about__highlights {
+    padding-left: 1.8rem;
+    list-style-type: disc;
+}
+
+.about__highlights li {
+    margin-bottom: 0.5rem;
+}
