@@ -126,4 +126,12 @@ body {
   margin-bottom: 0;
 }
 
-
+.business-logo-font {
+  /* Replace 'Roboto Slab' with the name of your special font */
+  font-family: 'Roboto Slab', serif;
+  
+  /* You can also adjust other properties here: */
+  font-weight: 700; /* Use a bold weight for a logo */
+  font-size: 1.5rem; /* Make it stand out */
+  color: #ffffff; /* Set a specific color */
+}

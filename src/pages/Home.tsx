@@ -1,4 +1,5 @@
 import './_pageStyles.css'
+import './Home.css'
 
 export default function Home() {
   return (

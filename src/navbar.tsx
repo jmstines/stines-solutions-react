@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import './styles.css'
 
 export default function Navbar() {
     return (
@@ -6,7 +7,7 @@ export default function Navbar() {
             <span className='nav-container'>
                 <ul>
                     <Link className='nav-top-main' to={"/"}>
-                        Jeffrey Stines
+                        <span className="business-logo-font">Stines Solutions</span>
                     </Link>
                              
                     <Link className='nav-top-menu' to="/contact">Contact</Link>
