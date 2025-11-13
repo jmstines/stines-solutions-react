@@ -5,19 +5,22 @@ export default function Home() {
     <div className="home-container">
       {/* Hero Section */}
       <header className="home-hero">
-        /images/profile.jpg
+        <img
+          src="/assets/profile.png"
+          alt="Profile"
+          className="hero-image"></img>
+
         <h1 className="heading-primary">Hi, I'm Jeffrey Stines</h1>
         <p className="intro-text">
           Senior Software Engineer passionate about building scalable SaaS
           solutions with C#, AWS, and modern web technologies.
         </p>
         <div className="home-actions">
-          {/* /aboutAbout Me</a>
-          /projectsView Projects</a> */}
+          <a>/aboutAbout Me</a>
+          <a>/projectsView Projects</a>
         </div>
       </header>
 
-      {/* Highlights Section */}
       <section className="home-highlights">
         <h2>What I Do</h2>
         <ul>
