@@ -16,10 +16,6 @@ export default function Home() {
           Senior Software Engineer passionate about building scalable SaaS
           solutions with C#, AWS, and modern web technologies.
         </p>
-        <div className="home-actions">
-          <a>/aboutAbout Me</a>
-          <a>/projectsView Projects</a>
-        </div>
       </header>
 
       <section className="home-highlights">
