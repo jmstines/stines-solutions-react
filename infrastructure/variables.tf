@@ -25,3 +25,7 @@
 # output "cloudfront_domain" {
 #   value = aws_cloudfront_distribution.cdn.domain_name
 # }
+
+variable "acm_certificate_arn" {
+  description = "ARN of ACM certificate in us-east-1"
+}
