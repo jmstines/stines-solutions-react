@@ -27,10 +27,16 @@ resource "aws_s3_bucket" "website" {
 }
 
 resource "aws_s3_bucket" "redirect_site" {
-  bucket = "stinessolutions.com"
+  bucket = "www.stinessolutions.com"
 
   website {
     redirect_all_requests_to = "stinessolutions.com"
+  }
+
+  tags = {
+    Name        = "Redirect Bucket"
+    Environment = "Production"
+    Owner       = "Jeffrey Stines"
   }
 }
 
