@@ -94,6 +94,7 @@ resource "aws_route53_record" "redirect_site" {
   zone_id = aws_route53_zone.main.zone_id
   name    = "www.stinessolutions.com"
   type    = "A"
+  depends_on = [ aws_cloudfront_distribution.website_cdn ]
 
   alias {
     name                   = aws_cloudfront_distribution.website_cdn.domain_name
@@ -104,7 +105,7 @@ resource "aws_route53_record" "redirect_site" {
 
 resource "aws_cloudfront_distribution" "website_cdn" {
   origin {
-    domain_name = aws_s3_bucket.website.bucket
+    domain_name = aws_s3_bucket.website.website_endpoint
     origin_id   = "s3-origin"
 
     custom_origin_config {
