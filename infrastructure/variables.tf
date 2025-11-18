@@ -26,10 +26,10 @@
 #   value = aws_cloudfront_distribution.cdn.domain_name
 # }
 
-variable "acm_certificate_arn" {
-  type = string
-  validation {
-    condition     = can(regex("^arn:aws:acm:us-east-1:[0-9]{12}:certificate/", var.acm_certificate_arn))
-    error_message = "The ACM certificate ARN must be in us-east-1 and follow the correct format."
-  }
-}
+# variable "acm_certificate_arn" {
+#   type = string
+#   validation {
+#     condition     = can(regex("^arn:aws:acm:us-east-1:[0-9]{12}:certificate/", var.acm_certificate_arn))
+#     error_message = "The ACM certificate ARN must be in us-east-1 and follow the correct format."
+#   }
+# }

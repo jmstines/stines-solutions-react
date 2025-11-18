@@ -51,11 +51,11 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
-        env:
-          TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERT_ARN }}
+        # env:
+        #   TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERT_ARN }}
         run: terraform plan
 
       - name: Terraform Apply
-        env:
-          TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERT_ARN }}
+        # env:
+        #   TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERT_ARN }}
         run: terraform apply -auto-approve

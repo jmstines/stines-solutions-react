@@ -3,6 +3,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "website" {
   bucket = "stinessolutions.com"
   force_destroy = true
@@ -79,18 +81,27 @@ resource "aws_s3_bucket_public_access_block" "website_block" {
   restrict_public_buckets = false
 }
 
-resource "aws_s3_bucket_policy" "public_read" {
-  bucket = aws_s3_bucket.website.id
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "Access Identity for S3 bucket stinessolutions.com"
+}
 
+resource "aws_s3_bucket_policy" "website_policy" {
+  bucket = aws_s3_bucket.website.id
   policy = jsonencode({
-    Version = "2012-10-17",
+    Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "PublicReadGetObject",
-        Effect    = "Allow",
-        Principal = "*",
-        Action    = "s3:GetObject",
+        Effect    = "Allow"
+        Principal = {
+          AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
+        }
+        Action    = "s3:GetObject"
         Resource  = "${aws_s3_bucket.website.arn}/*"
+        Condition = {
+          StringEquals = {
+            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+          }
+        }
       }
     ]
   })
@@ -125,10 +136,22 @@ resource "aws_route53_record" "redirect_site" {
   }
 }
 
+resource "aws_cloudfront_origin_access_control" "oac" {
+  name                              = "S3-OAC"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+
 resource "aws_cloudfront_distribution" "website_cdn" {
   origin {
-    domain_name = aws_s3_bucket.website.website_endpoint
+    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
     origin_id   = "s3-origin"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
 
     custom_origin_config {
       http_port              = 80
@@ -145,7 +168,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
   aliases = ["stinessolutions.com", "www.stinessolutions.com"]
 
   viewer_certificate {
-    acm_certificate_arn      = var.acm_certificate_arn
+    acm_certificate_arn      = aws_acm_certificate.cert.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
@@ -155,6 +178,7 @@ resource "aws_cloudfront_distribution" "website_cdn" {
     cached_methods         = ["GET", "HEAD"]
     target_origin_id       = "s3-origin"
     viewer_protocol_policy = "redirect-to-https"
+    compress               = true
 
     forwarded_values {
       query_string = false
