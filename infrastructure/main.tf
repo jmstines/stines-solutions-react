@@ -93,13 +93,13 @@ resource "aws_s3_bucket_policy" "website_policy" {
       {
         Effect    = "Allow"
         Principal = {
-          AWS = aws_cloudfront_origin_access_identity.oai.iam_arn
+          Service = aws_cloudfront_origin_access_identity.oai.iam_arn
         }
         Action    = "s3:GetObject"
         Resource  = "${aws_s3_bucket.website.arn}/*"
         Condition = {
           StringEquals = {
-            "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
+            "AWS:SourceArn" = aws_cloudfront_distribution.website_cdn.arn
           }
         }
       }
