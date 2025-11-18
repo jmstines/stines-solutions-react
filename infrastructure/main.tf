@@ -63,6 +63,11 @@ resource "aws_s3_bucket" "redirect_site" {
     Environment = "Production"
     Owner       = "Jeffrey Stines"
   }
+  
+  lifecycle {
+      prevent_destroy = false
+      ignore_changes  = [bucket]
+    }
 }
 
 resource "aws_acm_certificate" "cert" {
@@ -93,7 +98,7 @@ resource "aws_s3_bucket_policy" "website_policy" {
       {
         Effect    = "Allow"
         Principal = {
-          Service = aws_cloudfront_origin_access_identity.oai.iam_arn
+          Service = "cloudfront.amazonaws.com"
         }
         Action    = "s3:GetObject"
         Resource  = "${aws_s3_bucket.website.arn}/*"
@@ -145,12 +150,9 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 
 resource "aws_cloudfront_distribution" "website_cdn" {
   origin {
-    domain_name = aws_s3_bucket.website.bucket_regional_domain_name
-    origin_id   = "S3-origin"
-
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
-    }
+    domain_name              = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id                = "S3-origin"
+    origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
   enabled             = true
@@ -164,15 +166,15 @@ resource "aws_cloudfront_distribution" "website_cdn" {
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
   }
-
+  
   default_cache_behavior {
+    target_origin_id       = "S3-origin" # Match origin_id exactly
+    viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "s3-origin"
-    viewer_protocol_policy = "redirect-to-https"
     compress               = true
-
-    forwarded_values {
+   
+  forwarded_values {
       query_string = false
       cookies {
         forward = "none"
