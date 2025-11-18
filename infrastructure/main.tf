@@ -5,6 +5,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "website" {
   bucket = "stinessolutions.com"
+  force_destroy = true
 
   website {
     index_document = "index.html"
@@ -55,7 +56,6 @@ resource "aws_s3_bucket_public_access_block" "website_block" {
   ignore_public_acls      = false
   restrict_public_buckets = false
 }
-
 
 resource "aws_s3_bucket_policy" "public_read" {
   bucket = aws_s3_bucket.website.id
