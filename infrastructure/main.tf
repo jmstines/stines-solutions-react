@@ -27,6 +27,28 @@ resource "aws_s3_bucket" "website" {
   }
 }
 
+resource "aws_s3_object" "website_files" {
+  for_each = fileset("${path.module}/dist", "**")
+
+  bucket       = aws_s3_bucket.website.id
+  key          = each.value
+  source       = "${path.module}/dist/${each.value}"
+  etag         = filemd5("${path.module}/dist/${each.value}")
+
+  content_type = lookup(
+    {
+      html = "text/html"
+      css  = "text/css"
+      js   = "application/javascript"
+      png  = "image/png"
+      jpg  = "image/jpeg"
+      svg  = "image/svg+xml"
+    },
+    regex("^.*\\.(.*)$", each.value)[0],
+    "application/octet-stream"
+  )
+}
+
 resource "aws_s3_bucket" "redirect_site" {
   bucket = "www.stinessolutions.com"
 

@@ -24,6 +24,21 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.8.0
+     
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build   # Creates /dist folder
+
+      - name: List files in dist
+        run: find ${{ github.workspace }}/dist -type f
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
