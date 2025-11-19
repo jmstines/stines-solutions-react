@@ -36,6 +36,9 @@ jobs:
 
       - name: Build project
         run: npm run build   # Creates /dist folder
+        
+      - name: Move dist folder for Terraform
+        run: cp -r dist ./terraform-module/dist
 
       - name: List files in dist
         run: find ${{ github.workspace }}/dist -type f
