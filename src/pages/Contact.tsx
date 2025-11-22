@@ -16,7 +16,7 @@ export default function Contact() {
   });
 
   const [status, setStatus] = useState<string>("");
-  const apiUrl = process.env.API_GATEWAY_URL;
+  const apiUrl = import.meta.env.VITE_API_GATEWAY_URL;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
