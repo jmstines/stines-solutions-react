@@ -5,6 +5,33 @@ provider "aws" {
 
 data "aws_caller_identity" "current" {}
 
+terraform {
+  backend "s3" {
+    bucket         = "stines-solutions-state-bucket"
+    key            = "react-website/terraform.tfstate" # unique path for this project
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"          # optional for locking
+    encrypt        = true
+  }
+}
+
+data "terraform_remote_state" "lambda" {
+  backend = "s3"
+  config = {
+    bucket = "stines-solutions-state-bucket"
+    key    = "backend/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+output "api_gateway_url" {
+  value = data.terraform_remote_state.lambda.outputs.api_gateway_url
+}
+
+locals {
+  contact_api_url = "${data.terraform_remote_state.lambda.outputs.api_gateway_url}${data.terraform_remote_state.lambda.outputs.api_routes.contact}"
+}
+
 resource "aws_s3_bucket" "website" {
   bucket = "stinessolutions.com"
   force_destroy = true
