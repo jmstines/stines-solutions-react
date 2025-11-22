@@ -23,7 +23,7 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.message) {
@@ -32,7 +32,7 @@ export default function Contact() {
     }
 
     console.log("Form submitted:", formData);
-    submitContactForm(formData);
+    await submitContactForm(formData);
     setStatus("Message sent! I'll get back to you soon.");
     setFormData({ name: "", email: "", message: "" });
   };
