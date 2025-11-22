@@ -31,11 +31,27 @@ export default function Contact() {
       return;
     }
 
-    // Here you can integrate EmailJS or API call
     console.log("Form submitted:", formData);
+    submitContactForm(formData);
     setStatus("Message sent! I'll get back to you soon.");
     setFormData({ name: "", email: "", message: "" });
   };
+
+  async function submitContactForm(data: FormData) {
+    const response = await fetch(`${apiUrl}/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to submit form: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }
 
   return (
     <div id="contact-main" className="contact-container">
