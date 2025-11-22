@@ -44,6 +44,7 @@ export default function Contact() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      mode: 'cors',
     });
 
     if (!response.ok) {
