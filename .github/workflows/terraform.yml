@@ -47,8 +47,9 @@ jobs:
       - name: Get API URL from Remote State
         id: api-url
         run: |
-          API_URL=$(terraform output -raw api_gateway_url)
-          printf "VITE_API_GATEWAY_URL=%s\n" "$API_URL" >> $GITHUB_ENV
+          RAW_OUTPUT=$(terraform output -raw api_gateway_url)
+          CLEAN_URL=$(echo "$RAW_OUTPUT" | grep -Eo '^https://[a-zA-Z0-9.-]+\.execute-api\.[a-z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]+')
+          printf "VITE_API_GATEWAY_URL=%s\n" "$CLEAN_URL" >> $GITHUB_ENV
 
       - name: Build project 
         env:
