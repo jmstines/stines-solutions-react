@@ -61,7 +61,7 @@ export default function Contact() {
         Feel free to contact me by submitting the form below. I’ll get back to you as soon as possible.
       </p>
 
-      <form className="contact-form" onSubmit={handleSubmit}>
+      <form className="contact-form" autoComplete="off" onSubmit={handleSubmit}>
         <input
           type="text"
           name="name"
