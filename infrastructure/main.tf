@@ -28,10 +28,6 @@ output "api_gateway_url" {
   value = data.terraform_remote_state.lambda.outputs.api_gateway_url
 }
 
-locals {
-  contact_api_url = "${data.terraform_remote_state.lambda.outputs.api_gateway_url}${data.terraform_remote_state.lambda.outputs.api_routes.contact}"
-}
-
 resource "aws_s3_bucket" "website" {
   bucket = "stinessolutions.com"
   force_destroy = true
