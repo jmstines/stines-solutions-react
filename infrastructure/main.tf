@@ -15,7 +15,7 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "backend" {
+data "terraform_remote_state" "infrastructure" {
   backend = "s3"
   config = {
     bucket = "stines-solutions-state-bucket"
@@ -25,8 +25,8 @@ data "terraform_remote_state" "backend" {
 }
 
 locals {
-  bucket_name        = data.terraform_remote_state.infra.outputs.website_bucket_name
-  distribution_id    = data.terraform_remote_state.infra.outputs.cloudfront_distribution_id
+  bucket_name     = data.terraform_remote_state.infrastructure.outputs.website_bucket_name
+  distribution_id = data.terraform_remote_state.infrastructure.outputs.cloudfront_distribution_id
 
   # Content type mapping
   mime_types = {
@@ -43,24 +43,35 @@ locals {
   }
 }
 
-resource "aws_s3_object" "website_files" {
-  for_each = fileset("${path.module}/dist", "**")
-
-  bucket       = local.bucket_name
-  key          = each.value
-  source       = "${path.module}/dist/${each.value}"
-  etag         = filemd5("${path.module}/dist/${each.value}")
-  
-  content_type = lookup(
-      local.mime_types,
-      regex("^.*\\.([^.]+)$", each.value)[0],
-      "application/octet-stream"
+# Deploy website files using AWS CLI instead of Terraform's fileset
+# This avoids the performance issue of scanning all files during terraform plan
+resource "null_resource" "website_deployment" {
+  triggers = {
+    # Trigger redeployment on any .ts, .tsx, .css, or package.json change
+    # This is much faster than scanning the entire dist directory
+    source_files = try(
+      filemd5sha256("${path.module}/src"),
+      "init"
     )
-}
+  }
 
-resource "aws_cloudfront_invalidation" "deploy_invalidation" {
-  depends_on = [aws_s3_object.website_files]
+  provisioner "local-exec" {
+    command = <<-EOT
+      # Build the website if not already built
+      if [ ! -d "${path.module}/dist" ]; then
+        cd "${path.module}" && npm run build
+      fi
+      
+      # Sync files to S3
+      aws s3 sync "${path.module}/dist" "s3://${local.bucket_name}" --delete
+      
+      # Invalidate CloudFront cache
+      aws cloudfront create-invalidation --distribution-id "${local.distribution_id}" --paths "/*"
+    EOT
+    interpreter = ["bash", "-c"]
+  }
 
-  distribution_id = local.distribution_id
-  paths           = ["/*"]
+  depends_on = [
+    data.terraform_remote_state.infrastructure
+  ]
 }
