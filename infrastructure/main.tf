@@ -48,27 +48,21 @@ resource "null_resource" "website_deployment" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      echo "================================"
-      echo "Starting website deployment..."
-      echo "Bucket: ${local.bucket_name}"
-      echo "Distribution ID: ${local.distribution_id}"
-      echo "Dist directory: ${path.module}/dist"
+      set -e
+      echo "Starting website deployment to ${local.bucket_name}..." >&2
       
-      # Check if dist directory exists
       if [ ! -d "${path.module}/dist" ]; then
-        echo "ERROR: dist directory not found at ${path.module}/dist"
+        echo "ERROR: dist directory not found" >&2
         exit 1
       fi
       
-      echo "Listing dist contents:"
-      ls -lah "${path.module}/dist"
+      echo "Files in dist:" >&2
+      ls -lh "${path.module}/dist" | tail -5 >&2
       
-      # Sync files to S3
-      echo "Syncing files to S3..."
+      echo "Syncing to S3..." >&2
       aws s3 sync "${path.module}/dist" "s3://${local.bucket_name}" --delete
       
-      echo "S3 sync complete!"
-      echo "================================"
+      echo "Deployment complete!" >&2
     EOT
     interpreter = ["bash", "-c"]
   }
