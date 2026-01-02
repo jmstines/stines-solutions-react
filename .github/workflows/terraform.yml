@@ -52,7 +52,7 @@ jobs:
         run: |
           API_URL=$(terraform output -raw api_gateway_url)
           echo "Building with API_URL: $API_URL"
-          cd ../react-site
+          cd ..
           VITE_API_GATEWAY_URL="$API_URL" npm run build
 
       - name: List files in dist
