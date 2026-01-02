@@ -50,10 +50,15 @@ jobs:
       - name: Get API URL and Build
         working-directory: ./infrastructure
         run: |
+          echo "Getting API URL from terraform outputs..."
           API_URL=$(terraform output -raw api_gateway_url)
+          echo "API_URL captured: $API_URL"
+          echo "Length of API_URL: ${#API_URL}"
           echo "Building with API_URL: $API_URL"
           cd ..
+          echo "Building react-site with VITE_API_GATEWAY_URL=$API_URL"
           VITE_API_GATEWAY_URL="$API_URL" npm run build
+          echo "Build complete"
 
       - name: List files in dist
         run: find ${{ github.workspace }}/dist -type f
