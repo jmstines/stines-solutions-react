@@ -50,9 +50,9 @@ jobs:
       - name: Get API URL and Build
         working-directory: ./infrastructure
         run: |
-          API_URL=$(terraform output -raw api_gateway_url 2>&1 | grep -Eo 'https://[a-zA-Z0-9.-]+\.execute-api\.[a-z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]+' | head -1)
+          API_URL=$(terraform output -raw api_gateway_url)
           echo "Building with API_URL: $API_URL"
-          cd ..
+          cd ../react-site
           VITE_API_GATEWAY_URL="$API_URL" npm run build
 
       - name: List files in dist
