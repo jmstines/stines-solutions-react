@@ -42,26 +42,33 @@ locals {
 # This avoids the performance issue of scanning all files during terraform plan
 resource "null_resource" "website_deployment" {
   triggers = {
-    # Trigger redeployment on any .ts, .tsx, .css, or package.json change
-    # This is much faster than scanning the entire dist directory
-    source_files = try(
-      filemd5sha256("${path.module}/src"),
-      "init"
-    )
+    # Trigger on every apply to ensure files are always synced
+    always_run = timestamp()
   }
 
   provisioner "local-exec" {
     command = <<-EOT
-      # Build the website if not already built
+      echo "================================"
+      echo "Starting website deployment..."
+      echo "Bucket: ${local.bucket_name}"
+      echo "Distribution ID: ${local.distribution_id}"
+      echo "Dist directory: ${path.module}/dist"
+      
+      # Check if dist directory exists
       if [ ! -d "${path.module}/dist" ]; then
-        cd "${path.module}" && npm run build
+        echo "ERROR: dist directory not found at ${path.module}/dist"
+        exit 1
       fi
       
+      echo "Listing dist contents:"
+      ls -lah "${path.module}/dist"
+      
       # Sync files to S3
+      echo "Syncing files to S3..."
       aws s3 sync "${path.module}/dist" "s3://${local.bucket_name}" --delete
       
-      # Invalidate CloudFront cache
-      aws cloudfront create-invalidation --distribution-id "${local.distribution_id}" --paths "/*"
+      echo "S3 sync complete!"
+      echo "================================"
     EOT
     interpreter = ["bash", "-c"]
   }
