@@ -50,8 +50,8 @@ jobs:
       - name: Get API URL from Terraform Output
         id: api-url
         run: |
-          API_URL=$(terraform output -raw api_gateway_url)
-          echo "VITE_API_GATEWAY_URL=${API_URL}" >> $GITHUB_ENV
+          API_URL=$(terraform output -raw api_gateway_url 2>/dev/null)
+          echo "VITE_API_GATEWAY_URL=$API_URL" >> $GITHUB_ENV
 
       - name: Build project 
         env:
