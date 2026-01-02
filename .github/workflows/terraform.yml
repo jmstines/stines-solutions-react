@@ -50,8 +50,7 @@ jobs:
       - name: Get API URL from Terraform Output
         working-directory: ./infrastructure
         run: |
-          terraform output api_gateway_url > /tmp/api_url.txt
-          API_URL=$(cat /tmp/api_url.txt | tr -d '"' | xargs)
+          API_URL=$(terraform output -raw api_gateway_url 2>&1 | grep -Eo 'https://[a-zA-Z0-9.-]+\.execute-api\.[a-z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]+' | head -1)
           echo "VITE_API_GATEWAY_URL=$API_URL" >> $GITHUB_ENV
           echo "API URL set to: $API_URL"
 
