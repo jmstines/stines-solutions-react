@@ -11,6 +11,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18]
     
     defaults:
       run:
@@ -44,12 +47,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Get API URL from Remote State
+      - name: Get API URL from Terraform Output
         id: api-url
         run: |
-          RAW_OUTPUT=$(terraform output -raw api_gateway_url)
-          CLEAN_URL=$(echo "$RAW_OUTPUT" | grep -Eo '^https://[a-zA-Z0-9.-]+\.execute-api\.[a-z0-9-]+\.amazonaws\.com/[a-zA-Z0-9_-]+')
-          printf "VITE_API_GATEWAY_URL=%s\n" "$CLEAN_URL" >> $GITHUB_ENV
+          API_URL=$(terraform output -raw api_gateway_url)
+          echo "VITE_API_GATEWAY_URL=${API_URL}" >> $GITHUB_ENV
 
       - name: Build project 
         env:

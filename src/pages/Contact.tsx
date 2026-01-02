@@ -31,10 +31,22 @@ export default function Contact() {
       return;
     }
 
-    console.log("Form submitted:", formData);
-    await submitContactForm(formData);
-    setStatus("Message sent! I'll get back to you soon.");
-    setFormData({ name: "", email: "", message: "" });
+    if (!apiUrl) {
+      setStatus("Error: API Gateway URL not configured. Please check environment variables.");
+      console.error("VITE_API_GATEWAY_URL is not set");
+      return;
+    }
+
+    try {
+      console.log("Form submitted:", formData);
+      console.log("API URL:", apiUrl);
+      await submitContactForm(formData);
+      setStatus("Message sent! I'll get back to you soon.");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   async function submitContactForm(data: FormData) {
@@ -48,7 +60,8 @@ export default function Contact() {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to submit form: ${response.statusText}`);
+      const errorText = await response.text();
+      throw new Error(`Failed to submit form: ${response.statusText} - ${errorText}`);
     }
 
     return await response.json();
