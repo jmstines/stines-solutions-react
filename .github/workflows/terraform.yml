@@ -56,7 +56,7 @@ jobs:
           echo "API_URL captured: $API_URL"
           echo "Length of API_URL: ${#API_URL}"
           echo "Building with API_URL: $API_URL"
-          cd ..
+          cd ../react-site
           echo "Building react-site with VITE_API_GATEWAY_URL=$API_URL"
           VITE_API_GATEWAY_URL="$API_URL" npm run build
           echo "Build complete"
@@ -72,3 +72,9 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          DISTRIBUTION_ID=$(terraform output -raw cloudfront_distribution_id)
+          echo "Invalidating CloudFront distribution: $DISTRIBUTION_ID"
+          aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
