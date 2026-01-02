@@ -48,6 +48,7 @@ jobs:
         run: terraform init
 
       - name: Get API URL from Terraform Output
+        working-directory: ./infrastructure
         run: |
           terraform output api_gateway_url > /tmp/api_url.txt
           API_URL=$(cat /tmp/api_url.txt | tr -d '"' | xargs)
@@ -55,9 +56,9 @@ jobs:
           echo "API URL set to: $API_URL"
 
       - name: Build project 
-        env:
-            VITE_API_GATEWAY_URL: ${{ env.VITE_API_GATEWAY_URL }}
         run: npm run build
+        env:
+          VITE_API_GATEWAY_URL: ${{ env.VITE_API_GATEWAY_URL }}
 
       - name: List files in dist
         run: find ${{ github.workspace }}/dist -type f
