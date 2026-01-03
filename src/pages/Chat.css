@@ -1,7 +1,7 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 118px); /* Account for navbar (64px) and header (~54px) */
+  height: calc(100vh - 155px); /* Account for navbar (96px) and header (~55px) */
   background-color: #f9fafb;
 }
 
