@@ -15,5 +15,5 @@ output "cloudfront_domain_name" {
 
 output "api_gateway_url" {
   description = "API Gateway URL for the contact form"
-  value       = data.terraform_remote_state.infrastructure.outputs.api_gateway_url
+  value       = data.terraform_remote_state.backend.outputs.api_gateway_url
 }

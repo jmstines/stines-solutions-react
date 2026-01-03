@@ -19,6 +19,15 @@ data "terraform_remote_state" "infrastructure" {
   }
 }
 
+data "terraform_remote_state" "backend" {
+  backend = "s3"
+  config = {
+    bucket = "stines-solutions-state-bucket"
+    key    = "backend/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
 locals {
   bucket_name     = data.terraform_remote_state.infrastructure.outputs.website_bucket_name
   distribution_id = data.terraform_remote_state.infrastructure.outputs.cloudfront_distribution_id
