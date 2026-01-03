@@ -5,6 +5,7 @@ import Contact from "./pages/Contact";
 import Projects from "./pages/Projects";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
+import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 import './styles.css'
 
@@ -17,6 +18,14 @@ export function Router() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/login" element={<Login />} />
+          <Route 
+            path="/chat" 
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            } 
+          />
           <Route 
             path="/admin" 
             element={

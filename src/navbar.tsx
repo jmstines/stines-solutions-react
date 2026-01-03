@@ -17,6 +17,10 @@ export default function Navbar() {
                         <span className="business-logo-font">Stines Solutions</span>
                     </Link>
                     
+                    {user && (
+                        <Link className='nav-top-menu' to="/chat">Chat</Link>
+                    )}
+                    
                     {user && user.role === 'admin' && (
                         <Link className='nav-top-menu' to="/admin">Admin</Link>
                     )}
