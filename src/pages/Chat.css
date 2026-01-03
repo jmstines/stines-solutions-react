@@ -75,7 +75,13 @@
   background-color: white;
   border-right: 1px solid #e5e7eb;
   overflow-y: auto;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, width 0.3s ease;
+  transform: translateX(0);
+}
+
+.chat-sidebar:not(.show) {
+  width: 0;
+  transform: translateX(-100%);
 }
 
 .dark .chat-sidebar {
@@ -89,13 +95,8 @@
     left: 0;
     top: 0;
     height: 100%;
-    transform: translateX(-100%);
     z-index: 10;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .chat-sidebar.show {
-    transform: translateX(0);
   }
 }
 
