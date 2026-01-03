@@ -1,8 +1,15 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); /* Account for navbar */
+  height: 100vh;
+  max-height: 100vh;
   background-color: #f9fafb;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: 64px; /* Account for navbar */
 }
 
 .dark .chat-container {
@@ -224,8 +231,10 @@
 }
 
 .messages-list {
-  max-width: 48rem;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 1rem;
 }
 
 .error-banner {
