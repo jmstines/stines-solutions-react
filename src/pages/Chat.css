@@ -269,3 +269,63 @@
 .dark .chat-sidebar::-webkit-scrollbar-thumb {
   background: #4b5563;
 }
+
+/* Settings Bar */
+.chat-settings {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #f3f4f6;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dark .chat-settings {
+  background-color: #1f2937;
+  border-top-color: #374151;
+}
+
+.settings-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.dark .settings-label {
+  color: #9ca3af;
+}
+
+.settings-select {
+  padding: 0.5rem 0.75rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #111827;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.settings-select:hover {
+  border-color: #9ca3af;
+}
+
+.settings-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dark .settings-select {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark .settings-select:hover {
+  border-color: #6b7280;
+}
+
+.dark .settings-select:focus {
+  border-color: #3b82f6;
+}

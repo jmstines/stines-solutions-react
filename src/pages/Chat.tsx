@@ -25,6 +25,7 @@ export const Chat: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [maxTokens, setMaxTokens] = useState<number>(200);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export const Chat: React.FC = () => {
     setMessages((prev) => [...prev, tempUserMessage]);
 
     try {
-      const response = await sendMessage(message, currentConversationId);
+      const response = await sendMessage(message, currentConversationId, maxTokens);
       
       // Remove temp message and add both user and assistant messages
       setMessages((prev) => {
@@ -266,6 +267,24 @@ export const Chat: React.FC = () => {
               </button>
             </div>
           )}
+
+          {/* Settings Bar */}
+          <div className="chat-settings">
+            <label htmlFor="maxTokens" className="settings-label">
+              Response Length:
+            </label>
+            <select
+              id="maxTokens"
+              value={maxTokens}
+              onChange={(e) => setMaxTokens(Number(e.target.value))}
+              className="settings-select"
+            >
+              <option value={100}>Short (~75 words)</option>
+              <option value={200}>Medium (~150 words)</option>
+              <option value={300}>Long (~225 words)</option>
+              <option value={500}>Very Long (~375 words)</option>
+            </select>
+          </div>
 
           {/* Input */}
           <ChatInput onSend={handleSendMessage} disabled={loading} />

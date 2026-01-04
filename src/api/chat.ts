@@ -25,7 +25,8 @@ interface ConversationDetail {
 
 export async function sendMessage(
   message: string,
-  conversationId?: string
+  conversationId?: string,
+  maxTokens?: number
 ): Promise<ChatMessage> {
   const response = await fetch(`${API_BASE_URL}/chat`, {
     method: 'POST',
@@ -36,6 +37,7 @@ export async function sendMessage(
     body: JSON.stringify({
       message,
       conversationId,
+      maxTokens,
     }),
   });
 
