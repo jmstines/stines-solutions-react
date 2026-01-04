@@ -25,7 +25,7 @@ export const Chat: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [maxTokens, setMaxTokens] = useState<number>(200);
+  const [maxTokens, setMaxTokens] = useState<number>(500);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
