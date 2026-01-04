@@ -6,6 +6,7 @@ import Projects from "./pages/Projects";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Chat from "./pages/Chat";
+import ChangePassword from "./pages/ChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import './styles.css'
 
@@ -23,6 +24,14 @@ export function Router() {
             element={
               <ProtectedRoute>
                 <Chat />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/change-password" 
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
               </ProtectedRoute>
             } 
           />
