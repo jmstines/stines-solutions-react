@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -11,8 +11,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import './styles.css'
 
 export function Router() {
+    const location = useLocation();
+    const isFullWidth = location.pathname === '/chat';
+
     return (
-      <div className="main-container">
+      <div className={isFullWidth ? '' : 'main-container'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '../components/ChatMessage';
-import { ChatInput } from '../components/ChatInput';
 import { sendMessage, getConversations, getConversation, deleteConversation } from '../api/chat';
 import './Chat.css';
 
@@ -24,8 +23,9 @@ export const Chat: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const [maxTokens, setMaxTokens] = useState<number>(500);
+  const [inputMessage, setInputMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,7 +56,10 @@ export const Chat: React.FC = () => {
       setMessages(conversation.messages);
       setCurrentConversationId(conversationId);
       setError(null);
-      setShowSidebar(false);
+      // Close sidebar on mobile after selecting
+      if (window.innerWidth <= 768) {
+        setShowSidebar(false);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load conversation');
     } finally {
@@ -64,13 +67,14 @@ export const Chat: React.FC = () => {
     }
   };
 
-  const handleSendMessage = async (message: string) => {
-    if (!message.trim()) return;
+  const handleSendMessage = async () => {
+    const message = inputMessage.trim();
+    if (!message) return;
 
     setLoading(true);
     setError(null);
+    setInputMessage('');
 
-    // Optimistically add user message
     const tempUserMessage: Message = {
       messageId: `temp-${Date.now()}`,
       role: 'user',
@@ -81,8 +85,7 @@ export const Chat: React.FC = () => {
 
     try {
       const response = await sendMessage(message, currentConversationId, maxTokens);
-      
-      // Remove temp message and add both user and assistant messages
+
       setMessages((prev) => {
         const withoutTemp = prev.filter((m) => m.messageId !== tempUserMessage.messageId);
         return [
@@ -91,7 +94,7 @@ export const Chat: React.FC = () => {
             messageId: `user-${response.timestamp}`,
             role: 'user',
             content: message,
-            timestamp: response.timestamp - 1000, // Slightly before AI response
+            timestamp: response.timestamp - 1000,
           },
           {
             messageId: `assistant-${response.timestamp}`,
@@ -106,7 +109,6 @@ export const Chat: React.FC = () => {
       await loadConversations();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
-      // Remove optimistic message on error
       setMessages((prev) => prev.filter((m) => m.messageId !== tempUserMessage.messageId));
     } finally {
       setLoading(false);
@@ -116,7 +118,13 @@ export const Chat: React.FC = () => {
   const handleNewConversation = () => {
     setMessages([]);
     setCurrentConversationId(undefined);
-    setShowSidebar(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
   };
 
   const handleDeleteConversation = async (conversationId: string) => {
@@ -125,7 +133,7 @@ export const Chat: React.FC = () => {
     try {
       await deleteConversation(conversationId);
       await loadConversations();
-      
+
       if (currentConversationId === conversationId) {
         handleNewConversation();
       }
@@ -136,38 +144,32 @@ export const Chat: React.FC = () => {
 
   return (
     <div className="chat-container">
-      {/* Header */}
-      <div className="chat-header">
-        <button
-          onClick={() => setShowSidebar(!showSidebar)}
-          className="sidebar-toggle"
-          aria-label="Toggle sidebar"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <h1 className="chat-title">AI Chat Assistant</h1>
-        <button
-          onClick={handleNewConversation}
-          className="new-chat-button"
-          aria-label="New conversation"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          <span className="ml-2">New Chat</span>
-        </button>
-      </div>
+      {/* Sidebar */}
+      <div className={`chat-sidebar ${showSidebar ? '' : 'hidden'}`}>
+        <div className="sidebar-header">
+          <button onClick={handleNewConversation} className="new-chat-btn" aria-label="New chat">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <span>New chat</span>
+          </button>
+          <button
+            onClick={() => setShowSidebar(false)}
+            className="sidebar-toggle-btn"
+            aria-label="Close sidebar"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7M18 19l-7-7 7-7" />
+            </svg>
+          </button>
+        </div>
 
-      <div className="chat-layout">
-        {/* Sidebar */}
-        <div className={`chat-sidebar ${showSidebar ? 'show' : ''}`}>
-          <div className="sidebar-content">
-            <h2 className="sidebar-title">Conversations</h2>
-            {conversations.length === 0 ? (
-              <p className="sidebar-empty">No conversations yet</p>
-            ) : (
+        <div className="sidebar-conversations">
+          {conversations.length === 0 ? (
+            <p className="sidebar-empty">No conversations yet</p>
+          ) : (
+            <>
+              <p className="sidebar-section-label">Recent</p>
               <div className="conversation-list">
                 {conversations.map((conv) => (
                   <div
@@ -205,89 +207,135 @@ export const Chat: React.FC = () => {
                   </div>
                 ))}
               </div>
-            )}
-          </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile overlay when sidebar open */}
+      {showSidebar && (
+        <div className="sidebar-overlay" onClick={() => setShowSidebar(false)} />
+      )}
+
+      {/* Main Area */}
+      <div className="chat-main">
+        {/* Persistent header with sidebar toggle */}
+        <div className="chat-main-header">
+          <button
+            onClick={() => setShowSidebar(!showSidebar)}
+            className="sidebar-toggle"
+            aria-label={showSidebar ? 'Close sidebar' : 'Open sidebar'}
+          >
+            <svg style={{ width: '18px', height: '18px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
 
-        {/* Main Chat Area */}
-        <div className="chat-main">
-          {/* Messages */}
-          <div className="messages-container">
-            {messages.length === 0 ? (
-              <div className="empty-state">
-                <svg className="w-16 h-16 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-                <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Start a conversation
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Ask me anything! I'm here to help.
-                </p>
-              </div>
-            ) : (
-              <div className="messages-list">
-                {messages.map((msg) => (
-                  <ChatMessage
-                    key={msg.messageId}
-                    role={msg.role}
-                    content={msg.content}
-                    timestamp={msg.timestamp}
-                  />
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </div>
+        {/* Messages */}
+        <div className="messages-container">
+          {messages.length === 0 ? (
+            <div className="empty-state">
+              <h2 className="empty-state-title">How can I help you today?</h2>
+              <p className="empty-state-subtitle">Ask me anything — I'm here to help.</p>
+            </div>
+          ) : (
+            <div className="messages-list">
+              {messages.map((msg) => (
+                <ChatMessage
+                  key={msg.messageId}
+                  role={msg.role}
+                  content={msg.content}
+                  timestamp={msg.timestamp}
+                />
+              ))}
+              {loading && (
+                <div className="flex justify-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                      </svg>
+                    </div>
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="error-banner">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        {/* Error */}
+        {error && (
+          <div className="error-banner">
+            <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>{error}</span>
+            <button onClick={() => setError(null)} className="ml-auto flex-shrink-0">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                   clipRule="evenodd"
                 />
               </svg>
-              <span>{error}</span>
-              <button onClick={() => setError(null)} className="ml-auto">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
+            </button>
+          </div>
+        )}
+
+        {/* Input */}
+        <div className="chat-input-area">
+          <div className="chat-input-wrapper">
+            <div className="chat-input-box">
+              <textarea
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Message AI Assistant..."
+                disabled={loading}
+                className="chat-textarea"
+                rows={1}
+              />
+              <button
+                type="button"
+                onClick={handleSendMessage}
+                disabled={loading || !inputMessage.trim()}
+                className="send-button"
+                aria-label="Send message"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               </button>
             </div>
-          )}
-
-          {/* Settings Bar */}
-          <div className="chat-settings">
-            <label htmlFor="maxTokens" className="settings-label">
-              Response Length:
-            </label>
-            <select
-              id="maxTokens"
-              value={maxTokens}
-              onChange={(e) => setMaxTokens(Number(e.target.value))}
-              className="settings-select"
-            >
-              <option value={100}>Short (~75 words)</option>
-              <option value={200}>Medium (~150 words)</option>
-              <option value={300}>Long (~225 words)</option>
-              <option value={500}>Very Long (~375 words)</option>
-            </select>
+            <div className="input-footer">
+              <p className="input-hint">Enter to send · Shift+Enter for new line</p>
+              <div className="settings-inline">
+                <label htmlFor="maxTokens" className="settings-label-sm">Length:</label>
+                <select
+                  id="maxTokens"
+                  value={maxTokens}
+                  onChange={(e) => setMaxTokens(Number(e.target.value))}
+                  className="settings-select"
+                >
+                  <option value={100}>Short</option>
+                  <option value={200}>Medium</option>
+                  <option value={300}>Long</option>
+                  <option value={500}>Very long</option>
+                </select>
+              </div>
+            </div>
           </div>
-
-          {/* Input */}
-          <ChatInput onSend={handleSendMessage} disabled={loading} />
         </div>
       </div>
     </div>

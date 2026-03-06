@@ -10,6 +10,9 @@ terraform.tfvars
 
 # testing
 /coverage
+/playwright-output
+/playwright-screenshots
+/test-results
 
 # next.js
 /.next/
