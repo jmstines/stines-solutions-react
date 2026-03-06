@@ -23,7 +23,7 @@ export const Chat: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const [showSidebar, setShowSidebar] = useState(() => window.innerWidth > 768);
   const [maxTokens, setMaxTokens] = useState<number>(500);
   const [inputMessage, setInputMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);

@@ -1,7 +1,7 @@
 /* === CHAT CONTAINER === */
 .chat-container {
   display: flex;
-  height: calc(100vh - 96px);
+  height: 100%;
   background: #ffffff;
   overflow: hidden;
   position: relative;

@@ -15,7 +15,7 @@ export function Router() {
     const isFullWidth = location.pathname === '/chat';
 
     return (
-      <div className={isFullWidth ? '' : 'main-container'}>
+      <div className={isFullWidth ? 'page-fill-height' : 'main-container'}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

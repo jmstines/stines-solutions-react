@@ -28,20 +28,45 @@ html {
 /* 56.25em === 900px */
 @media (max-width: 56.25em) {
   html {
-    font-size: 58%;
+    font-size: 62.5%; /* keep readable on tablets — was 58% */
   }
 }
 
 /* 37.5em === 600px */
 @media (max-width: 37.5em) {
   html {
-    font-size: 56%;
+    font-size: 62.5%; /* keep readable on phones — was 56% */
+  }
+
+  /* Tighten nav so items fit better at narrow widths */
+  .nav-top {
+    padding: 0.75rem 0;
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .nav-top a,
+  .nav-button {
+    padding: 0.75rem 0.875rem;
+    letter-spacing: 0;
+  }
+
+  .user-menu-button {
+    padding: 0.75rem;
   }
 }
   
 body {
   margin: 0;
   font-family: 'PT Sans', sans-serif;
+}
+
+/* Full-height flex fill for pages like /chat */
+.page-fill-height {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {

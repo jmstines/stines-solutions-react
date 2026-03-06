@@ -8,8 +8,10 @@ export function WrappedApp() {
   return (
     <AuthProvider>
       <HashRouter>
-        <Navbar />
-        <Router />
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+          <Navbar />
+          <Router />
+        </div>
       </HashRouter>
     </AuthProvider>
   );
