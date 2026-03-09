@@ -115,3 +115,35 @@
   color: #065f46;
   border: 1px solid #a7f3d0;
 }
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input {
+  padding-right: 2.75rem;
+  box-sizing: border-box;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.password-toggle:hover {
+  color: #374151;
+}
+
+.password-toggle:disabled {
+  cursor: not-allowed;
+}
