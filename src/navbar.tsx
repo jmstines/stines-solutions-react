@@ -109,7 +109,6 @@ export default function Navbar() {
                     )}
                     
                     <Link className='nav-top-menu' to="/contact">Contact</Link>
-                    <Link className='nav-top-menu' to="/projects">Projects</Link>
                     <Link className='nav-top-menu' to="/about">About</Link>
                     <Link className='nav-top-menu' to="/">Home</Link>
                 </ul>
