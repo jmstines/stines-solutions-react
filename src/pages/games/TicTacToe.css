@@ -1,0 +1,368 @@
+.ttt-container {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.ttt-setup-card,
+.ttt-game-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+}
+
+.ttt-title {
+  text-align: center;
+  font-size: 2rem;
+  color: #1f2937;
+  margin-bottom: 2rem;
+}
+
+/* ── Setup ────────────────────────────────────── */
+
+.ttt-setup-section {
+  margin-bottom: 1.5rem;
+}
+
+.ttt-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.ttt-toggle-group {
+  display: flex;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ttt-toggle-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  background: white;
+  border: none;
+  border-right: 1px solid #d1d5db;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #4b5563;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.ttt-toggle-btn:last-child {
+  border-right: none;
+}
+
+.ttt-toggle-btn:hover:not(.active) {
+  background-color: #f3f4f6;
+}
+
+.ttt-toggle-btn.active {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 500;
+}
+
+.ttt-hint {
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  color: #6b7280;
+}
+
+.ttt-name-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.ttt-name-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.ttt-start-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.ttt-start-btn:hover {
+  background-color: #2563eb;
+}
+
+/* ── Scoreboard ───────────────────────────────── */
+
+.ttt-scores {
+  display: flex;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.ttt-score-item {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  background: #f9fafb;
+}
+
+.ttt-score-item + .ttt-score-item {
+  border-left: 1px solid #e5e7eb;
+}
+
+.ttt-score-draws {
+  background: #f3f4f6;
+  flex: 0.7;
+}
+
+.ttt-score-name {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ttt-score-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* ── Legend ───────────────────────────────────── */
+
+.ttt-legend {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.ttt-mark {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.ttt-x {
+  color: #3b82f6;
+}
+
+.ttt-o {
+  color: #ef4444;
+}
+
+/* ── Coin flip screen ─────────────────────────── */
+
+.ttt-coinflip-card {
+  text-align: center;
+  padding: 3rem 2.5rem;
+}
+
+.ttt-coinflip-dice {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: ttt-bounce 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes ttt-bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-8px); }
+}
+
+.ttt-coinflip-heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  margin-bottom: 1.75rem;
+}
+
+.ttt-coinflip-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.ttt-coinflip-mark-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ttt-coinflip-symbol {
+  font-size: 1.6rem !important;
+}
+
+.ttt-coinflip-mark-name {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.ttt-coinflip-divider {
+  font-size: 1.4rem;
+  color: #9ca3af;
+}
+
+/* ── Status ───────────────────────────────────── */
+
+.ttt-status {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #374151;
+  background: #f3f4f6;
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  margin-bottom: 1.25rem;
+  min-height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ttt-status-win {
+  background: #d1fae5;
+  color: #065f46;
+  font-weight: 700;
+}
+
+.ttt-status-draw {
+  background: #fef3c7;
+  color: #92400e;
+  font-weight: 600;
+}
+
+/* ── Board ────────────────────────────────────── */
+
+.ttt-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.ttt-cell {
+  aspect-ratio: 1;
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ttt-board--x-turn .ttt-cell:hover:not(:disabled):not(.ttt-cell-x):not(.ttt-cell-o) {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.ttt-board--o-turn .ttt-cell:hover:not(:disabled):not(.ttt-cell-x):not(.ttt-cell-o) {
+  background: #fff1f2;
+  border-color: #fecaca;
+}
+
+.ttt-cell:disabled:not(.ttt-cell-x):not(.ttt-cell-o) {
+  cursor: not-allowed;
+}
+
+.ttt-cell-x {
+  color: #3b82f6;
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  cursor: default;
+}
+
+.ttt-cell-o {
+  color: #ef4444;
+  border-color: #fecaca;
+  background: #fff1f2;
+  cursor: default;
+}
+
+.ttt-cell-win-x {
+  background: #dbeafe !important;
+  border-color: #3b82f6 !important;
+  transform: scale(1.05);
+}
+
+.ttt-cell-win-o {
+  background: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  transform: scale(1.05);
+}
+
+/* ── Game-over actions ────────────────────────── */
+
+.ttt-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ttt-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ttt-btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.ttt-btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.ttt-btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.ttt-btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+/* ── Responsive ───────────────────────────────── */
+
+@media (max-width: 37.5em) {
+  .ttt-setup-card,
+  .ttt-game-card {
+    padding: 1.5rem;
+  }
+
+  .ttt-cell {
+    font-size: 2rem;
+  }
+}

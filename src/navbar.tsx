@@ -6,29 +6,34 @@ import './styles.css'
 export default function Navbar() {
     const { user, logout } = useAuth();
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showGamesDropdown, setShowGamesDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const gamesMenuRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = async () => {
         await logout();
         setShowDropdown(false);
     };
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setShowDropdown(false);
             }
+            if (gamesMenuRef.current && !gamesMenuRef.current.contains(event.target as Node)) {
+                setShowGamesDropdown(false);
+            }
         };
 
-        if (showDropdown) {
+        if (showDropdown || showGamesDropdown) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [showDropdown]);
+    }, [showDropdown, showGamesDropdown]);
 
     return (
         <nav className="nav-top">
@@ -37,11 +42,11 @@ export default function Navbar() {
                     <Link className='nav-top-main' to={"/"}>
                         <span className="business-logo-font">Stines Solutions</span>
                     </Link>
-                    
+
                     {user ? (
                         <div className="nav-top-menu user-menu" ref={dropdownRef}>
-                            <button 
-                                className="user-menu-button" 
+                            <button
+                                className="user-menu-button"
                                 onClick={() => setShowDropdown(!showDropdown)}
                                 aria-label="User menu"
                             >
@@ -81,8 +86,8 @@ export default function Navbar() {
                                             Create Account
                                         </Link>
                                     )}
-                                    <Link 
-                                        className="user-dropdown-item" 
+                                    <Link
+                                        className="user-dropdown-item"
                                         to="/change-password"
                                         onClick={() => setShowDropdown(false)}
                                     >
@@ -103,13 +108,49 @@ export default function Navbar() {
                     ) : (
                         <Link className='nav-top-menu' to="/login">Login</Link>
                     )}
-                    
+
                     {user && (
                         <Link className='nav-top-menu' to="/chat">Chat</Link>
                     )}
-                    
+
                     <Link className='nav-top-menu' to="/contact">Contact</Link>
                     <Link className='nav-top-menu' to="/about">About</Link>
+
+                    {/* Games dropdown */}
+                    <div className="nav-top-menu games-menu" ref={gamesMenuRef}>
+                        <button
+                            className="games-menu-button"
+                            onClick={() => setShowGamesDropdown(!showGamesDropdown)}
+                            aria-label="Games menu"
+                        >
+                            Games
+                            <svg
+                                className={`games-chevron ${showGamesDropdown ? 'open' : ''}`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                width="14"
+                                height="14"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {showGamesDropdown && (
+                            <div className="user-dropdown">
+                                <Link
+                                    className="user-dropdown-item"
+                                    to="/games/tic-tac-toe"
+                                    onClick={() => setShowGamesDropdown(false)}
+                                >
+                                    <svg className="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Tic Tac Toe
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
                     <Link className='nav-top-menu' to="/">Home</Link>
                 </ul>
             </span>

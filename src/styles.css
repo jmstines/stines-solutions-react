@@ -269,3 +269,36 @@ body {
   width: 18px;
   height: 18px;
 }
+
+/* Games Menu Dropdown */
+.games-menu {
+  position: relative;
+}
+
+.games-menu-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 1.3rem;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background-color 0.2s;
+}
+
+.games-menu-button:hover {
+  background-color: #555;
+}
+
+.games-chevron {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.games-chevron.open {
+  transform: rotate(180deg);
+}
