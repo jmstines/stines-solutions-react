@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Chat from "./pages/Chat";
 import ChangePassword from "./pages/ChangePassword";
+import CreateUser from "./pages/CreateUser";
 import ProtectedRoute from "./components/ProtectedRoute";
 import './styles.css'
 
@@ -38,13 +39,21 @@ export function Router() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/admin" 
+          <Route
+            path="/admin"
             element={
               <ProtectedRoute requiredRole="admin">
                 <Admin />
               </ProtectedRoute>
-            } 
+            }
+          />
+          <Route
+            path="/create-user"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <CreateUser />
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </div>
