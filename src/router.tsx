@@ -6,7 +6,6 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Chat from "./pages/Chat";
 import ChangePassword from "./pages/ChangePassword";
-import CreateUser from "./pages/CreateUser";
 import UserAdmin from "./pages/UserAdmin";
 import TicTacToe from "./pages/games/TicTacToe";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -44,14 +43,6 @@ export function Router() {
             element={
               <ProtectedRoute requiredRole="admin">
                 <Admin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/create-user"
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <CreateUser />
               </ProtectedRoute>
             }
           />

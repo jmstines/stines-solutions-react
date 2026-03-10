@@ -51,6 +51,16 @@ const UserAdmin: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
+  // Create user modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createEmail, setCreateEmail] = useState('');
+  const [createPassword, setCreatePassword] = useState('');
+  const [showCreatePassword, setShowCreatePassword] = useState(false);
+  const [createRole, setCreateRole] = useState<'user' | 'admin'>('user');
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState('');
+  const [createSuccess, setCreateSuccess] = useState('');
+
   const loadUsers = useCallback(async () => {
     setLoadingUsers(true);
     setPageError('');
@@ -174,6 +184,55 @@ const UserAdmin: React.FC = () => {
     setDeleteError('');
   };
 
+  // --- Create User ---
+  const openCreate = () => {
+    setCreateEmail('');
+    setCreatePassword('');
+    setShowCreatePassword(false);
+    setCreateRole('user');
+    setCreateError('');
+    setCreateSuccess('');
+    setShowCreateModal(true);
+  };
+
+  const closeCreate = () => {
+    setShowCreateModal(false);
+    setCreateError('');
+    setCreateSuccess('');
+  };
+
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (createPassword.length < 8) {
+      setCreateError('Password must be at least 8 characters');
+      return;
+    }
+    setCreateError('');
+    setCreateSuccess('');
+    setCreateLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/create-user`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: createEmail.toLowerCase().trim(), password: createPassword, role: createRole }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create account');
+      }
+      setCreateSuccess(`Account for ${createEmail.toLowerCase().trim()} created successfully`);
+      setCreateEmail('');
+      setCreatePassword('');
+      setCreateRole('user');
+      loadUsers();
+    } catch (err) {
+      setCreateError(err instanceof Error ? err.message : 'Failed to create account');
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
   const handleDeleteConfirm = async () => {
     if (!deletingUser) return;
     setDeleteLoading(true);
@@ -204,11 +263,19 @@ const UserAdmin: React.FC = () => {
       <div className="user-admin-card">
         <div className="user-admin-header">
           <h1>User Administration</h1>
-          <button className="btn-icon-refresh" onClick={loadUsers} title="Refresh" disabled={loadingUsers}>
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          </button>
+          <div className="user-admin-header-actions">
+            <button className="btn-primary btn-create-user" onClick={openCreate}>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              </svg>
+              Create User
+            </button>
+            <button className="btn-icon-refresh" onClick={loadUsers} title="Refresh" disabled={loadingUsers}>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {pageError && (
@@ -285,6 +352,95 @@ const UserAdmin: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Create User Modal */}
+      {showCreateModal && (
+        <div className="ua-modal-backdrop" onClick={closeCreate}>
+          <div className="ua-modal" onClick={e => e.stopPropagation()}>
+            <div className="ua-modal-header">
+              <h2>Create User</h2>
+              <button className="ua-modal-close" onClick={closeCreate} aria-label="Close">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {createError && (
+              <div className="alert alert-error">
+                <svg className="alert-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                {createError}
+              </div>
+            )}
+            {createSuccess && (
+              <div className="alert alert-success">
+                <svg className="alert-icon" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {createSuccess}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateSubmit}>
+              <div className="form-group">
+                <label htmlFor="create-email">Email</label>
+                <input
+                  type="email"
+                  id="create-email"
+                  value={createEmail}
+                  onChange={e => setCreateEmail(e.target.value)}
+                  required
+                  disabled={createLoading}
+                  placeholder="user@example.com"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="create-password">Password</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showCreatePassword ? 'text' : 'password'}
+                    id="create-password"
+                    value={createPassword}
+                    onChange={e => setCreatePassword(e.target.value)}
+                    required
+                    disabled={createLoading}
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowCreatePassword(!showCreatePassword)}
+                    aria-label={showCreatePassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showCreatePassword ? <EyeSlashIcon /> : <EyeIcon />}
+                  </button>
+                </div>
+                <small className="form-hint">Must be at least 8 characters</small>
+              </div>
+              <div className="form-group">
+                <label htmlFor="create-role">Role</label>
+                <select
+                  id="create-role"
+                  value={createRole}
+                  onChange={e => setCreateRole(e.target.value as 'user' | 'admin')}
+                  disabled={createLoading}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div className="ua-modal-footer">
+                <button type="button" className="btn-secondary" onClick={closeCreate} disabled={createLoading}>Cancel</button>
+                <button type="submit" className="btn-primary" disabled={createLoading}>
+                  {createLoading ? 'Creating...' : 'Create Account'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {editingUser && (
