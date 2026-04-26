@@ -7,8 +7,10 @@ export default function Navbar() {
     const { user, logout } = useAuth();
     const [showDropdown, setShowDropdown] = useState(false);
     const [showGamesDropdown, setShowGamesDropdown] = useState(false);
+    const [showToolsDropdown, setShowToolsDropdown] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const gamesMenuRef = useRef<HTMLDivElement>(null);
+    const toolsMenuRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = async () => {
         await logout();
@@ -24,9 +26,12 @@ export default function Navbar() {
             if (gamesMenuRef.current && !gamesMenuRef.current.contains(event.target as Node)) {
                 setShowGamesDropdown(false);
             }
+            if (toolsMenuRef.current && !toolsMenuRef.current.contains(event.target as Node)) {
+                setShowToolsDropdown(false);
+            }
         };
 
-        if (showDropdown || showGamesDropdown) {
+        if (showDropdown || showGamesDropdown || showToolsDropdown) {
             document.addEventListener('mousedown', handleClickOutside);
         }
 
@@ -115,6 +120,43 @@ export default function Navbar() {
 
                     <Link className='nav-top-menu' to="/contact">Contact</Link>
                     <Link className='nav-top-menu' to="/about">About</Link>
+
+                    {/* Tools dropdown */}
+                    {user && (
+                        <div className="nav-top-menu games-menu" ref={toolsMenuRef}>
+                            <button
+                                className="games-menu-button"
+                                onClick={() => setShowToolsDropdown(!showToolsDropdown)}
+                                aria-label="Tools menu"
+                            >
+                                Tools
+                                <svg
+                                    className={`games-chevron ${showToolsDropdown ? 'open' : ''}`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    width="14"
+                                    height="14"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            {showToolsDropdown && (
+                                <div className="user-dropdown">
+                                    <Link
+                                        className="user-dropdown-item"
+                                        to="/tools/trade-assistant"
+                                        onClick={() => setShowToolsDropdown(false)}
+                                    >
+                                        <svg className="dropdown-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                        </svg>
+                                        Trade Assistant
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* Games dropdown */}
                     <div className="nav-top-menu games-menu" ref={gamesMenuRef}>

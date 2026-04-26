@@ -1,0 +1,394 @@
+.trade-assistant {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 3rem 2rem 5rem;
+}
+
+.trade-header {
+  margin-bottom: 3rem;
+}
+
+.trade-header h1 {
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.trade-subtitle {
+  font-size: 1.5rem;
+  color: #888;
+  letter-spacing: 0.5px;
+}
+
+/* ── Two-column layout ── */
+.trade-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 56.25em) {
+  .trade-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Input Panel ── */
+.trade-inputs-panel {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.section-label {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+}
+
+/* Direction Toggle */
+.direction-toggle {
+  display: flex;
+  gap: 1rem;
+}
+
+.dir-btn {
+  flex: 1;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.8rem;
+  background: #f9fafb;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dir-btn:hover {
+  border-color: rgba(var(--themeColor), 0.5);
+}
+
+.dir-active-long {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #15803d;
+}
+
+.dir-active-short {
+  background: #fee2e2;
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+/* Price Grid */
+.price-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.price-field label {
+  font-size: 1.3rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.price-field input,
+.trade-select {
+  font-size: 1.5rem;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.6rem;
+  background: #f9fafb;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+  width: 100%;
+}
+
+.price-field input:focus,
+.trade-select:focus {
+  border-color: rgba(var(--themeColor), 1);
+  background: #fff;
+}
+
+.trade-select {
+  cursor: pointer;
+}
+
+/* Confluence Toggle */
+.confluence-toggle {
+  display: flex;
+  gap: 1rem;
+}
+
+.conf-btn {
+  flex: 1;
+  padding: 0.9rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.8rem;
+  background: #f9fafb;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.conf-btn:hover {
+  border-color: rgba(var(--themeColor), 0.5);
+}
+
+.conf-active {
+  background: rgba(var(--themeColor), 0.1);
+  border-color: rgba(var(--themeColor), 1);
+  color: rgba(var(--themeColor), 1);
+}
+
+/* Checkbox */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 1.5rem;
+  color: #374151;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 1.8rem;
+  height: 1.8rem;
+  accent-color: rgba(var(--themeColor), 1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Results Panel ── */
+.trade-results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Placeholder */
+.results-placeholder {
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 1.2rem;
+  padding: 5rem 2rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.results-placeholder p {
+  font-size: 1.6rem;
+}
+
+/* Signal Badge */
+.signal-badge {
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.signal-buy {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+}
+
+.signal-sell {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fff;
+}
+
+.signal-hold {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  color: #fff;
+}
+
+.signal-status {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.signal-sub {
+  font-size: 1.5rem;
+  opacity: 0.85;
+}
+
+/* Steps */
+.steps-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  padding: 2rem;
+}
+
+.steps-section h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1.4rem;
+}
+
+.step-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.2rem;
+  border-radius: 0.8rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.step-card:last-child {
+  margin-bottom: 0;
+}
+
+.step-pass {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.step-fail {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.step-icon {
+  font-size: 1.6rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.step-pass .step-icon { color: #16a34a; }
+.step-fail .step-icon { color: #dc2626; }
+
+.step-label {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.2rem;
+}
+
+.step-detail {
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* Trade Params */
+.trade-params {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  padding: 2rem;
+}
+
+.trade-params h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 1.4rem;
+}
+
+.params-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.param-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 1.2rem;
+  background: #f9fafb;
+  border-radius: 0.6rem;
+  border: 1px solid #e5e7eb;
+}
+
+.param-label {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9ca3af;
+}
+
+.param-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.param-stop { color: #dc2626; }
+.param-target { color: #16a34a; }
+
+/* JSON Section */
+.json-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  padding: 2rem;
+}
+
+.json-toggle-btn {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: rgba(var(--themeColor), 1);
+  background: none;
+  border: 1px solid rgba(var(--themeColor), 0.4);
+  border-radius: 0.6rem;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.json-toggle-btn:hover {
+  background: rgba(var(--themeColor), 0.06);
+}
+
+.json-output {
+  margin-top: 1.4rem;
+  background: #1e293b;
+  color: #e2e8f0;
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+}

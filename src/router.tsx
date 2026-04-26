@@ -8,6 +8,7 @@ import Chat from "./pages/Chat";
 import ChangePassword from "./pages/ChangePassword";
 import UserAdmin from "./pages/UserAdmin";
 import TicTacToe from "./pages/games/TicTacToe";
+import TradeAssistant from "./pages/tools/TradeAssistant";
 import ProtectedRoute from "./components/ProtectedRoute";
 import './styles.css'
 
@@ -55,6 +56,14 @@ export function Router() {
             }
           />
           <Route path="/games/tic-tac-toe" element={<TicTacToe />} />
+          <Route
+            path="/tools/trade-assistant"
+            element={
+              <ProtectedRoute>
+                <TradeAssistant />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     );
