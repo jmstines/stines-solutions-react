@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Direction,
   StopType,
@@ -7,6 +7,7 @@ import {
   TradeResult,
   runRuleEngine,
 } from '../../utils/tradeCalculator';
+import { getTradeSignals, TradeSignalsResponse, TradeSignal } from '../../api/tradeSignals';
 import './TradeAssistant.css';
 
 const DEFAULT_INPUTS: TradeInputs = {
@@ -44,8 +45,47 @@ const StepCard: React.FC<StepCardProps> = ({ label, detail, pass }) => (
 );
 
 export const TradeAssistant: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'calculator' | 'scanner'>('scanner');
   const [inputs, setInputs] = useState<TradeInputs>(DEFAULT_INPUTS);
   const [showJson, setShowJson] = useState(false);
+
+  // Scanner state
+  const [scanData, setScanData] = useState<TradeSignalsResponse | null>(null);
+  const [scanLoading, setScanLoading] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+
+  const loadScanResults = useCallback(async (date?: string) => {
+    setScanLoading(true);
+    setScanError(null);
+    try {
+      const data = await getTradeSignals(date);
+      setScanData(data);
+    } catch (err) {
+      setScanError(err instanceof Error ? err.message : 'Failed to load scan results');
+    } finally {
+      setScanLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'scanner' && !scanData) {
+      loadScanResults();
+    }
+  }, [activeTab, scanData, loadScanResults]);
+
+  function loadCandidateIntoCalculator(signal: TradeSignal) {
+    if (!signal.entry || !signal.stop || !signal.target || !signal.direction) return;
+    setInputs(prev => ({
+      ...prev,
+      direction: signal.direction as Direction,
+      entryPrice: signal.entry!,
+      stopPrice: signal.stop!,
+      targetPrice: signal.target!,
+      macroStructureValid: true,
+      breakoutConfirmed: true,
+    }));
+    setActiveTab('calculator');
+  }
 
   const result: TradeResult | null = useMemo(() => {
     if (!hasRequiredPrices(inputs)) return null;
@@ -70,12 +110,157 @@ export const TradeAssistant: React.FC = () => {
     <div className="trade-assistant">
       <div className="trade-header">
         <h1>Trade Assistant</h1>
-        <p className="trade-subtitle">5BP Breakout Rule Engine — Phase 1 Calculator</p>
+        <p className="trade-subtitle">5BP Breakout Rule Engine</p>
       </div>
 
-      <div className="trade-layout">
-        {/* ── LEFT: Inputs ── */}
-        <div className="trade-inputs-panel">
+      {/* Tab switcher */}
+      <div className="trade-tabs">
+        <button
+          className={`trade-tab ${activeTab === 'scanner' ? 'trade-tab-active' : ''}`}
+          onClick={() => setActiveTab('scanner')}
+        >
+          📡 Scanner
+        </button>
+        <button
+          className={`trade-tab ${activeTab === 'calculator' ? 'trade-tab-active' : ''}`}
+          onClick={() => setActiveTab('calculator')}
+        >
+          🧮 Calculator
+        </button>
+      </div>
+
+      {/* ── SCANNER TAB ── */}
+      {activeTab === 'scanner' && (
+        <div className="scanner-panel">
+          <div className="scanner-header">
+            <div>
+              {scanData && (
+                <p className="scanner-date">
+                  Market date: <strong>{scanData.marketDate}</strong>
+                  {' · '}
+                  <span className={`scan-status scan-status-${scanData.scanStatus}`}>
+                    {scanData.scanStatus === 'completed' && '✓ Scan complete'}
+                    {scanData.scanStatus === 'processing' && '⏳ Scan in progress'}
+                    {scanData.scanStatus === 'failed' && '✗ Scan failed'}
+                    {scanData.scanStatus === 'no_data' && 'No scan data yet'}
+                  </span>
+                  {scanData.scannedAt && (
+                    <span className="scanner-time">
+                      {' · '}scanned at {new Date(scanData.scannedAt).toLocaleTimeString()}
+                    </span>
+                  )}
+                </p>
+              )}
+            </div>
+            <button
+              className="scan-refresh-btn"
+              onClick={() => loadScanResults()}
+              disabled={scanLoading}
+            >
+              {scanLoading ? '⏳ Loading…' : '↻ Refresh'}
+            </button>
+          </div>
+
+          {scanError && (
+            <div className="scan-error">⚠ {scanError}</div>
+          )}
+
+          {scanLoading && !scanData && (
+            <div className="scan-loading">Loading scan results…</div>
+          )}
+
+          {!scanLoading && !scanError && scanData?.scanStatus === 'no_data' && (
+            <div className="scan-empty">
+              <p>No scan data for today. The scanner runs automatically on market days at 5 PM ET.</p>
+            </div>
+          )}
+
+          {scanData && scanData.signals.length > 0 && (
+            <>
+              {/* Candidates */}
+              {scanData.signals.filter(s => s.signalType === 'Candidate').length > 0 && (
+                <div className="scan-section">
+                  <h3>🟢 Candidates ({scanData.signals.filter(s => s.signalType === 'Candidate').length})</h3>
+                  <p className="scan-note">Steps 2.1–2.3 passed. Verify Step 2.4 confluence before trading.</p>
+                  <div className="signals-table-wrapper">
+                    <table className="signals-table">
+                      <thead>
+                        <tr>
+                          <th>Symbol</th>
+                          <th>Dir</th>
+                          <th>Entry</th>
+                          <th>Stop</th>
+                          <th>Target</th>
+                          <th>RRR</th>
+                          <th>Risk%</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {scanData.signals
+                          .filter(s => s.signalType === 'Candidate')
+                          .map(signal => (
+                            <tr key={signal.symbol} className={signal.direction === 'Long' ? 'row-long' : 'row-short'}>
+                              <td className="symbol-cell">{signal.symbol}</td>
+                              <td>
+                                <span className={`dir-badge ${signal.direction === 'Long' ? 'dir-long' : 'dir-short'}`}>
+                                  {signal.direction === 'Long' ? '▲ Long' : '▼ Short'}
+                                </span>
+                              </td>
+                              <td>${signal.entry?.toFixed(2)}</td>
+                              <td className="stop-cell">${signal.stop?.toFixed(2)}</td>
+                              <td className="target-cell">${signal.target?.toFixed(2)}</td>
+                              <td>{signal.rrr?.toFixed(2)}</td>
+                              <td>{signal.riskPercent}%</td>
+                              <td>
+                                <button
+                                  className="load-btn"
+                                  onClick={() => loadCandidateIntoCalculator(signal)}
+                                >
+                                  Analyze →
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Filtered — collapsed by default */}
+              {scanData.signals.filter(s => s.signalType === 'Filtered').length > 0 && (
+                <details className="scan-section scan-filtered">
+                  <summary>
+                    ⚪ Filtered out ({scanData.signals.filter(s => s.signalType === 'Filtered').length} tickers)
+                  </summary>
+                  <table className="signals-table filtered-table">
+                    <thead>
+                      <tr><th>Symbol</th><th>Reason</th></tr>
+                    </thead>
+                    <tbody>
+                      {scanData.signals
+                        .filter(s => s.signalType === 'Filtered')
+                        .map(signal => (
+                          <tr key={signal.symbol}>
+                            <td className="symbol-cell">{signal.symbol}</td>
+                            <td className="filter-reason">{signal.filterReason}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </details>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ── CALCULATOR TAB ── */}
+      {activeTab === 'calculator' && (
+        <div className="trade-layout">
+          {/* ── LEFT: Inputs ── */}
+          <div className="trade-inputs-panel">
 
           {/* Direction */}
           <div className="input-section">
@@ -335,6 +520,7 @@ export const TradeAssistant: React.FC = () => {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 };

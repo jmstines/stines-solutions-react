@@ -392,3 +392,239 @@
   overflow-x: auto;
   font-family: 'Courier New', monospace;
 }
+
+/* ── Tabs ── */
+.trade-tabs {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 2.4rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0;
+}
+
+.trade-tab {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0.9rem 2rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #6b7280;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: inherit;
+}
+
+.trade-tab:hover {
+  color: #374151;
+}
+
+.trade-tab-active {
+  color: rgba(var(--themeColor), 1);
+  border-bottom-color: rgba(var(--themeColor), 1);
+}
+
+/* ── Scanner Panel ── */
+.scanner-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.scanner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.scanner-date {
+  font-size: 1.4rem;
+  color: #374151;
+}
+
+.scanner-time {
+  color: #9ca3af;
+  font-size: 1.3rem;
+}
+
+.scan-status {
+  font-weight: 600;
+}
+
+.scan-status-completed { color: #16a34a; }
+.scan-status-processing { color: #d97706; }
+.scan-status-failed     { color: #dc2626; }
+.scan-status-no_data    { color: #9ca3af; }
+
+.scan-refresh-btn {
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 0.7rem 1.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.8rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  color: #374151;
+}
+
+.scan-refresh-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.scan-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.scan-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1.2rem 1.6rem;
+  border-radius: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.scan-loading, .scan-empty {
+  color: #6b7280;
+  font-size: 1.5rem;
+  padding: 4rem;
+  text-align: center;
+}
+
+.scan-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1.2rem;
+  padding: 2rem;
+}
+
+.scan-section h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 0.6rem;
+}
+
+.scan-note {
+  font-size: 1.3rem;
+  color: #f59e0b;
+  margin-bottom: 1.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.scan-filtered summary {
+  cursor: pointer;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #9ca3af;
+  list-style: none;
+}
+
+.scan-filtered summary::-webkit-details-marker { display: none; }
+
+.scan-filtered summary::before {
+  content: '▶ ';
+  font-size: 1.1rem;
+}
+
+.scan-filtered[open] summary::before {
+  content: '▼ ';
+}
+
+.signals-table-wrapper {
+  overflow-x: auto;
+}
+
+.signals-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.4rem;
+}
+
+.signals-table th {
+  text-align: left;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.signals-table td {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #f9fafb;
+  color: #374151;
+}
+
+.symbol-cell {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #111827 !important;
+  font-family: 'Courier New', monospace;
+}
+
+.row-long { background: #f0fdf4; }
+.row-long:hover { background: #dcfce7; }
+.row-short { background: #fff1f2; }
+.row-short:hover { background: #ffe4e6; }
+
+.dir-badge {
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 0.4rem;
+  white-space: nowrap;
+}
+
+.dir-long  { background: #dcfce7; color: #15803d; }
+.dir-short { background: #ffe4e6; color: #b91c1c; }
+
+.stop-cell   { color: #dc2626 !important; font-weight: 600; }
+.target-cell { color: #16a34a !important; font-weight: 600; }
+
+.filter-reason {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.filtered-table td, .filtered-table th {
+  padding: 0.7rem 1rem;
+}
+
+.load-btn {
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  background: rgba(var(--themeColor), 0.08);
+  color: rgba(var(--themeColor), 1);
+  border: 1px solid rgba(var(--themeColor), 0.3);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.load-btn:hover {
+  background: rgba(var(--themeColor), 0.15);
+}
+
+@media (max-width: 600px) {
+  .signals-table th:nth-child(6),
+  .signals-table td:nth-child(6),
+  .signals-table th:nth-child(7),
+  .signals-table td:nth-child(7) {
+    display: none;
+  }
+}
