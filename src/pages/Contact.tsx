@@ -45,7 +45,7 @@ export default function Contact() {
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       console.error("Form submission error:", error);
-      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setStatus("Something went wrong. Please try again later.");
     }
   };
 
@@ -60,8 +60,7 @@ export default function Contact() {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to submit form: ${response.statusText} - ${errorText}`);
+      throw new Error('Failed to submit form. Please try again later.');
     }
 
     return await response.json();
