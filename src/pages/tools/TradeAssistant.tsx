@@ -9,6 +9,7 @@ import {
 } from '../../utils/tradeCalculator';
 import { getTradeSignals, TradeSignalsResponse, TradeSignal } from '../../api/tradeSignals';
 import { getWatchlist, addToWatchlist, removeFromWatchlist, WatchlistSymbol } from '../../api/watchlist';
+import { getStockSymbols, refreshStockSymbols, clearLocalCache, StockSymbol } from '../../api/stockSymbols';
 import { useAuth } from '../../contexts/AuthContext';
 import './TradeAssistant.css';
 
@@ -64,6 +65,16 @@ export const TradeAssistant: React.FC = () => {
   const [watchlistError, setWatchlistError] = useState<string | null>(null);
   const [newSymbol, setNewSymbol] = useState('');
   const [addingSymbol, setAddingSymbol] = useState(false);
+
+  // Symbol browser state
+  const [allSymbols, setAllSymbols] = useState<StockSymbol[]>([]);
+  const [symbolsLastUpdated, setSymbolsLastUpdated] = useState<number | null>(null);
+  const [symbolsLoading, setSymbolsLoading] = useState(false);
+  const [symbolsError, setSymbolsError] = useState<string | null>(null);
+  const [symbolSearch, setSymbolSearch] = useState('');
+  const [selectedSymbols, setSelectedSymbols] = useState<Set<string>>(new Set());
+  const [browserOpen, setBrowserOpen] = useState(false);
+  const [refreshingSymbols, setRefreshingSymbols] = useState(false);
 
   const loadScanResults = useCallback(async (date?: string) => {
     setScanLoading(true);
@@ -125,6 +136,65 @@ export const TradeAssistant: React.FC = () => {
       setWatchlistError(err instanceof Error ? err.message : 'Failed to remove symbol');
     }
   }, []);
+
+  const loadAllSymbols = useCallback(async (force = false) => {
+    setSymbolsLoading(true);
+    setSymbolsError(null);
+    try {
+      const data = await getStockSymbols(force);
+      setAllSymbols(data.symbols);
+      setSymbolsLastUpdated(data.lastUpdated);
+    } catch (err) {
+      setSymbolsError(err instanceof Error ? err.message : 'Failed to load symbol list');
+    } finally {
+      setSymbolsLoading(false);
+    }
+  }, []);
+
+  const handleOpenBrowser = useCallback(() => {
+    setBrowserOpen(true);
+    if (allSymbols.length === 0) loadAllSymbols();
+  }, [allSymbols.length, loadAllSymbols]);
+
+  const handleRefreshSymbols = useCallback(async () => {
+    setRefreshingSymbols(true);
+    setSymbolsError(null);
+    try {
+      await refreshStockSymbols();
+      clearLocalCache();
+      await loadAllSymbols(true);
+    } catch (err) {
+      setSymbolsError(err instanceof Error ? err.message : 'Refresh failed');
+    } finally {
+      setRefreshingSymbols(false);
+    }
+  }, [loadAllSymbols]);
+
+  const handleAddSelected = useCallback(async () => {
+    if (selectedSymbols.size === 0) return;
+    setWatchlistError(null);
+    const toAdd = Array.from(selectedSymbols);
+    try {
+      await Promise.all(toAdd.map(sym => addToWatchlist(sym)));
+      setSelectedSymbols(new Set());
+      await loadWatchlist();
+    } catch (err) {
+      setWatchlistError(err instanceof Error ? err.message : 'Failed to add symbols');
+    }
+  }, [selectedSymbols, loadWatchlist]);
+
+  const watchlistSymbolSet = useMemo(
+    () => new Set(watchlist.map(w => w.symbol)),
+    [watchlist]
+  );
+
+  const filteredSymbols = useMemo(() => {
+    const q = symbolSearch.trim().toUpperCase();
+    if (!q) return allSymbols.slice(0, 100); // show first 100 when no search
+    return allSymbols.filter(
+      s => s.symbol.includes(q) || s.name.toUpperCase().includes(q)
+    ).slice(0, 100);
+  }, [allSymbols, symbolSearch]);
 
   function loadCandidateIntoCalculator(signal: TradeSignal) {
     if (!signal.entry || !signal.stop || !signal.target || !signal.direction) return;
@@ -370,6 +440,91 @@ export const TradeAssistant: React.FC = () => {
               )}
             </div>
           )}
+
+          {/* ── Symbol Browser ── */}
+          <div className="symbol-browser">
+            <div className="symbol-browser-header">
+              <button className="symbol-browser-toggle" onClick={() => browserOpen ? setBrowserOpen(false) : handleOpenBrowser()}>
+                {browserOpen ? '▼' : '▶'} Browse Symbol List
+                {allSymbols.length > 0 && <span className="symbol-browser-count">({allSymbols.length.toLocaleString()} symbols)</span>}
+              </button>
+              {isAdmin && (
+                <button
+                  className="scan-refresh-btn"
+                  onClick={handleRefreshSymbols}
+                  disabled={refreshingSymbols}
+                  title={symbolsLastUpdated ? `Last updated ${new Date(symbolsLastUpdated).toLocaleDateString()}` : 'Never updated'}
+                >
+                  {refreshingSymbols ? '⏳ Refreshing…' : '↻ Refresh List'}
+                </button>
+              )}
+            </div>
+
+            {browserOpen && (
+              <div className="symbol-browser-body">
+                {symbolsError && <div className="scan-error">⚠ {symbolsError}</div>}
+
+                <div className="symbol-search-row">
+                  <input
+                    className="symbol-search-input"
+                    type="text"
+                    placeholder="Search by symbol or company name…"
+                    value={symbolSearch}
+                    onChange={e => setSymbolSearch(e.target.value)}
+                    autoFocus
+                  />
+                  {selectedSymbols.size > 0 && (
+                    <button className="watchlist-add-btn" onClick={handleAddSelected}>
+                      + Add {selectedSymbols.size} Selected
+                    </button>
+                  )}
+                </div>
+
+                {symbolsLoading ? (
+                  <div className="scan-loading">Loading symbols…</div>
+                ) : (
+                  <>
+                    <div className="symbol-list">
+                      {filteredSymbols.map(s => {
+                        const inWatchlist = watchlistSymbolSet.has(s.symbol);
+                        const isChecked = selectedSymbols.has(s.symbol);
+                        return (
+                          <label
+                            key={s.symbol}
+                            className={`symbol-row ${inWatchlist ? 'symbol-row-added' : ''}`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked || inWatchlist}
+                              disabled={inWatchlist}
+                              onChange={() => {
+                                if (inWatchlist) return;
+                                setSelectedSymbols(prev => {
+                                  const next = new Set(prev);
+                                  isChecked ? next.delete(s.symbol) : next.add(s.symbol);
+                                  return next;
+                                });
+                              }}
+                            />
+                            <span className="symbol-row-ticker">{s.symbol}</span>
+                            <span className="symbol-row-name">{s.name}</span>
+                            <span className="symbol-row-exchange">{s.exchange}</span>
+                            {inWatchlist && <span className="symbol-row-badge">✓ Added</span>}
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {allSymbols.length > 0 && filteredSymbols.length === 100 && (
+                      <p className="symbol-browser-hint">Showing first 100 results — refine your search to narrow down.</p>
+                    )}
+                    {allSymbols.length === 0 && !symbolsLoading && (
+                      <p className="watchlist-empty">No symbol data cached yet. {isAdmin ? 'Click "Refresh List" to load.' : 'Ask an admin to refresh the symbol list.'}</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
