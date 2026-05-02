@@ -8,6 +8,8 @@ import {
   runRuleEngine,
 } from '../../utils/tradeCalculator';
 import { getTradeSignals, TradeSignalsResponse, TradeSignal } from '../../api/tradeSignals';
+import { getWatchlist, addToWatchlist, removeFromWatchlist, WatchlistSymbol } from '../../api/watchlist';
+import { useAuth } from '../../contexts/AuthContext';
 import './TradeAssistant.css';
 
 const DEFAULT_INPUTS: TradeInputs = {
@@ -45,7 +47,9 @@ const StepCard: React.FC<StepCardProps> = ({ label, detail, pass }) => (
 );
 
 export const TradeAssistant: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'calculator' | 'scanner'>('scanner');
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
+  const [activeTab, setActiveTab] = useState<'calculator' | 'scanner' | 'watchlist'>('scanner');
   const [inputs, setInputs] = useState<TradeInputs>(DEFAULT_INPUTS);
   const [showJson, setShowJson] = useState(false);
 
@@ -53,6 +57,13 @@ export const TradeAssistant: React.FC = () => {
   const [scanData, setScanData] = useState<TradeSignalsResponse | null>(null);
   const [scanLoading, setScanLoading] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+
+  // Watchlist state
+  const [watchlist, setWatchlist] = useState<WatchlistSymbol[]>([]);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
+  const [watchlistError, setWatchlistError] = useState<string | null>(null);
+  const [newSymbol, setNewSymbol] = useState('');
+  const [addingSymbol, setAddingSymbol] = useState(false);
 
   const loadScanResults = useCallback(async (date?: string) => {
     setScanLoading(true);
@@ -71,7 +82,49 @@ export const TradeAssistant: React.FC = () => {
     if (activeTab === 'scanner' && !scanData) {
       loadScanResults();
     }
+    if (activeTab === 'watchlist' && watchlist.length === 0) {
+      loadWatchlist();
+    }
   }, [activeTab, scanData, loadScanResults]);
+
+  const loadWatchlist = useCallback(async () => {
+    setWatchlistLoading(true);
+    setWatchlistError(null);
+    try {
+      const data = await getWatchlist();
+      setWatchlist(data.symbols);
+    } catch (err) {
+      setWatchlistError(err instanceof Error ? err.message : 'Failed to load watchlist');
+    } finally {
+      setWatchlistLoading(false);
+    }
+  }, []);
+
+  const handleAddSymbol = useCallback(async () => {
+    const symbol = newSymbol.toUpperCase().trim();
+    if (!symbol) return;
+    setAddingSymbol(true);
+    setWatchlistError(null);
+    try {
+      await addToWatchlist(symbol);
+      setNewSymbol('');
+      await loadWatchlist();
+    } catch (err) {
+      setWatchlistError(err instanceof Error ? err.message : 'Failed to add symbol');
+    } finally {
+      setAddingSymbol(false);
+    }
+  }, [newSymbol, loadWatchlist]);
+
+  const handleRemoveSymbol = useCallback(async (symbol: string) => {
+    setWatchlistError(null);
+    try {
+      await removeFromWatchlist(symbol);
+      setWatchlist(prev => prev.filter(s => s.symbol !== symbol));
+    } catch (err) {
+      setWatchlistError(err instanceof Error ? err.message : 'Failed to remove symbol');
+    }
+  }, []);
 
   function loadCandidateIntoCalculator(signal: TradeSignal) {
     if (!signal.entry || !signal.stop || !signal.target || !signal.direction) return;
@@ -127,6 +180,14 @@ export const TradeAssistant: React.FC = () => {
         >
           🧮 Calculator
         </button>
+        {isAdmin && (
+          <button
+            className={`trade-tab ${activeTab === 'watchlist' ? 'trade-tab-active' : ''}`}
+            onClick={() => setActiveTab('watchlist')}
+          >
+            📋 Watchlist
+          </button>
+        )}
       </div>
 
       {/* ── SCANNER TAB ── */}
@@ -252,6 +313,62 @@ export const TradeAssistant: React.FC = () => {
                 </details>
               )}
             </>
+          )}
+        </div>
+      )}
+
+      {/* ── WATCHLIST TAB ── */}
+      {activeTab === 'watchlist' && isAdmin && (
+        <div className="watchlist-panel">
+          <div className="watchlist-header">
+            <h2>Scanner Watchlist</h2>
+            <p className="watchlist-subtitle">{watchlist.length} symbol{watchlist.length !== 1 ? 's' : ''} — scanned daily at market close</p>
+          </div>
+
+          {watchlistError && (
+            <div className="scan-error">⚠ {watchlistError}</div>
+          )}
+
+          <div className="watchlist-add-row">
+            <input
+              className="watchlist-input"
+              type="text"
+              placeholder="Add symbol (e.g. AAPL)"
+              value={newSymbol}
+              onChange={e => setNewSymbol(e.target.value.toUpperCase())}
+              onKeyDown={e => e.key === 'Enter' && handleAddSymbol()}
+              maxLength={5}
+            />
+            <button
+              className="watchlist-add-btn"
+              onClick={handleAddSymbol}
+              disabled={addingSymbol || !newSymbol.trim()}
+            >
+              {addingSymbol ? '…' : '+ Add'}
+            </button>
+          </div>
+
+          {watchlistLoading ? (
+            <div className="scan-loading">Loading watchlist…</div>
+          ) : (
+            <div className="watchlist-grid">
+              {watchlist.map(({ symbol, addedAt }) => (
+                <div key={symbol} className="watchlist-chip">
+                  <span className="watchlist-symbol">{symbol}</span>
+                  <span className="watchlist-date">{new Date(addedAt).toLocaleDateString()}</span>
+                  <button
+                    className="watchlist-remove-btn"
+                    onClick={() => handleRemoveSymbol(symbol)}
+                    title={`Remove ${symbol}`}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {watchlist.length === 0 && (
+                <p className="watchlist-empty">No symbols yet — add some above.</p>
+              )}
+            </div>
           )}
         </div>
       )}

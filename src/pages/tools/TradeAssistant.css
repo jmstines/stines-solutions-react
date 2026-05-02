@@ -628,3 +628,126 @@
     display: none;
   }
 }
+
+/* ── Watchlist Panel ── */
+.watchlist-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 72rem;
+}
+
+.watchlist-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.4rem;
+}
+
+.watchlist-subtitle {
+  font-size: 1.4rem;
+  color: #9ca3af;
+}
+
+.watchlist-add-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.watchlist-input {
+  flex: 1;
+  font-size: 1.5rem;
+  padding: 0.9rem 1.2rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.8rem;
+  background: #f9fafb;
+  color: #111827;
+  outline: none;
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  transition: border-color 0.15s;
+}
+
+.watchlist-input:focus {
+  border-color: rgba(var(--themeColor), 1);
+  background: #fff;
+}
+
+.watchlist-add-btn {
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 0.9rem 2rem;
+  background: rgba(var(--themeColor), 1);
+  color: #fff;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.watchlist-add-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.watchlist-add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.watchlist-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.watchlist-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1.2rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.8rem;
+  transition: border-color 0.15s;
+}
+
+.watchlist-chip:hover {
+  border-color: #d1d5db;
+}
+
+.watchlist-symbol {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  font-family: 'Courier New', monospace;
+}
+
+.watchlist-date {
+  font-size: 1.2rem;
+  color: #9ca3af;
+}
+
+.watchlist-remove-btn {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+
+.watchlist-remove-btn:hover {
+  color: #dc2626;
+}
+
+.watchlist-empty {
+  font-size: 1.5rem;
+  color: #9ca3af;
+  padding: 2rem 0;
+}
