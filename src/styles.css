@@ -76,9 +76,11 @@ body {
 
 .main-container {
   max-width: 120rem;
-  margin: auto;
+  margin: 5rem auto 0;
   width: 90%;
-  margin-top: 5rem;
+  flex: 1;
+  min-height: 0;    /* required: lets flex child shrink so overflow-y works */
+  overflow-y: auto;
 }
 
 .nav-container {
