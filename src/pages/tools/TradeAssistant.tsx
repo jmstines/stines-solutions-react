@@ -7,7 +7,7 @@ import {
   TradeResult,
   runRuleEngine,
 } from '../../utils/tradeCalculator';
-import { getTradeSignals, TradeSignalsResponse, TradeSignal } from '../../api/tradeSignals';
+import { getTradeSignals, runScan, TradeSignalsResponse, TradeSignal } from '../../api/tradeSignals';
 import { getWatchlist, addToWatchlist, removeFromWatchlist, WatchlistSymbol } from '../../api/watchlist';
 import { getStockSymbols, refreshStockSymbols, clearLocalCache, StockSymbol } from '../../api/stockSymbols';
 import { useAuth } from '../../contexts/AuthContext';
@@ -58,6 +58,7 @@ export const TradeAssistant: React.FC = () => {
   const [scanData, setScanData] = useState<TradeSignalsResponse | null>(null);
   const [scanLoading, setScanLoading] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [scanRunning, setScanRunning] = useState(false);
 
   // Watchlist state
   const [watchlist, setWatchlist] = useState<WatchlistSymbol[]>([]);
@@ -88,6 +89,21 @@ export const TradeAssistant: React.FC = () => {
       setScanLoading(false);
     }
   }, []);
+
+  const handleRunScan = useCallback(async () => {
+    setScanRunning(true);
+    setScanError(null);
+    try {
+      const result = await runScan();
+      console.log(`Scan dispatched: ${result.totalTickers} tickers, runId=${result.scanRunId}`);
+      // Refresh results after a short delay to pick up the _META_ processing record
+      setTimeout(() => loadScanResults(), 2000);
+    } catch (err) {
+      setScanError(err instanceof Error ? err.message : 'Failed to start scan');
+    } finally {
+      setScanRunning(false);
+    }
+  }, [loadScanResults]);
 
   useEffect(() => {
     if (activeTab === 'scanner' && !scanData) {
@@ -290,6 +306,16 @@ export const TradeAssistant: React.FC = () => {
             >
               {scanLoading ? '⏳ Loading…' : '↻ Refresh'}
             </button>
+            {isAdmin && (
+              <button
+                className="scan-run-btn"
+                onClick={handleRunScan}
+                disabled={scanRunning}
+                title="Dispatch a scan of the current watchlist"
+              >
+                {scanRunning ? '⏳ Dispatching…' : '▶ Run Scan Now'}
+              </button>
+            )}
           </div>
 
           {scanError && (
@@ -302,7 +328,7 @@ export const TradeAssistant: React.FC = () => {
 
           {!scanLoading && !scanError && scanData?.scanStatus === 'no_data' && (
             <div className="scan-empty">
-              <p>No scan data for today. The scanner runs automatically on market days at 5 PM ET.</p>
+              <p>No scan data for today. The scanner runs automatically on market days at 5 PM ET.{isAdmin && ' Or click "Run Scan Now" to trigger it manually.'}</p>
             </div>
           )}
 

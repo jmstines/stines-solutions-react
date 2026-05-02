@@ -482,6 +482,29 @@
   cursor: not-allowed;
 }
 
+.scan-run-btn {
+  font-size: 1.4rem;
+  font-weight: 600;
+  padding: 0.7rem 1.6rem;
+  border: none;
+  border-radius: 0.8rem;
+  background: #16a34a;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  margin-left: 0.8rem;
+}
+
+.scan-run-btn:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.scan-run-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .scan-error {
   background: #fef2f2;
   border: 1px solid #fecaca;

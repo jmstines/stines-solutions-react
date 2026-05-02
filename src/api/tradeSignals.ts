@@ -29,6 +29,27 @@ export interface TradeSignalsResponse {
   signals: TradeSignal[];
 }
 
+export interface RunScanResponse {
+  message: string;
+  scanRunId: string;
+  totalTickers: number;
+}
+
+export async function runScan(): Promise<RunScanResponse> {
+  const response = await fetch(`${API_BASE_URL}/trade-scan/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Failed to start scan (${response.status})`);
+  }
+
+  return response.json();
+}
+
 export async function getTradeSignals(date?: string): Promise<TradeSignalsResponse> {
   const url = date
     ? `${API_BASE_URL}/trade-signals?date=${encodeURIComponent(date)}`
