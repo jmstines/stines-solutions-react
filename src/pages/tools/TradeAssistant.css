@@ -58,6 +58,65 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Tooltip */
+.field-tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.field-tooltip-icon {
+  font-size: 1.1rem;
+  color: #9ca3af;
+  cursor: default;
+  line-height: 1;
+  font-style: normal;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  user-select: none;
+}
+
+.field-tooltip-bubble {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 0;
+  transform: none;
+  background: #1f2937;
+  color: #f9fafb;
+  font-size: 1.25rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.5;
+  padding: 0.8rem 1.1rem;
+  border-radius: 0.6rem;
+  width: 26rem;
+  white-space: normal;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.field-tooltip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 1rem;
+  transform: none;
+  border: 6px solid transparent;
+  border-top-color: #1f2937;
+}
+
+.field-tooltip:hover .field-tooltip-bubble,
+.field-tooltip:focus-within .field-tooltip-bubble {
+  display: block;
 }
 
 /* Direction Toggle */
@@ -112,10 +171,14 @@
   font-size: 1.3rem;
   color: #6b7280;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .price-field input,
-.trade-select {
+.trade-select,
+.calc-symbol-input {
   font-size: 1.5rem;
   padding: 0.9rem 1.2rem;
   border: 1px solid #d1d5db;
@@ -129,9 +192,17 @@
 }
 
 .price-field input:focus,
-.trade-select:focus {
+.trade-select:focus,
+.calc-symbol-input:focus {
   border-color: rgba(var(--themeColor), 1);
   background: #fff;
+}
+
+.calc-symbol-input {
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  max-width: 16rem;
 }
 
 .trade-select {

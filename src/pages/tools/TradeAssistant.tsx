@@ -47,6 +47,17 @@ const StepCard: React.FC<StepCardProps> = ({ label, detail, pass }) => (
   </div>
 );
 
+interface TooltipProps {
+  text: string;
+}
+
+const Tooltip: React.FC<TooltipProps> = ({ text }) => (
+  <span className="field-tooltip">
+    <span className="field-tooltip-icon" aria-label="Help">ℹ</span>
+    <span className="field-tooltip-bubble" role="tooltip">{text}</span>
+  </span>
+);
+
 function getTodayET(): string {
   const etDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
   const y = etDate.getFullYear();
@@ -77,6 +88,9 @@ export const TradeAssistant: React.FC = () => {
   const [scanLoading, setScanLoading] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const [scanRunning, setScanRunning] = useState(false);
+
+  // Calculator symbol
+  const [calcSymbol, setCalcSymbol] = useState<string>('');
 
   // Watchlist state
   const [watchlist, setWatchlist] = useState<WatchlistSymbol[]>([]);
@@ -240,6 +254,7 @@ export const TradeAssistant: React.FC = () => {
 
   function loadCandidateIntoCalculator(signal: TradeSignal) {
     if (!signal.entry || !signal.stop || !signal.target || !signal.direction) return;
+    setCalcSymbol(signal.symbol);
     setInputs(prev => ({
       ...prev,
       direction: signal.direction as Direction,
@@ -599,9 +614,28 @@ export const TradeAssistant: React.FC = () => {
           {/* ── LEFT: Inputs ── */}
           <div className="trade-inputs-panel">
 
+          {/* Symbol */}
+          <div className="input-section">
+            <label className="section-label">
+              Stock Symbol
+              <Tooltip text="The ticker symbol for the stock you're analyzing (e.g. AAPL). Auto-filled when loading a candidate from the Scanner." />
+            </label>
+            <input
+              className="calc-symbol-input"
+              type="text"
+              placeholder="e.g. AAPL"
+              value={calcSymbol}
+              onChange={e => setCalcSymbol(e.target.value.toUpperCase())}
+              maxLength={5}
+            />
+          </div>
+
           {/* Direction */}
           <div className="input-section">
-            <label className="section-label">Direction</label>
+            <label className="section-label">
+              Direction
+              <Tooltip text="Long = you expect the price to rise (buy low, sell high). Short = you expect the price to fall (sell high, buy back lower)." />
+            </label>
             <div className="direction-toggle">
               <button
                 className={`dir-btn ${inputs.direction === 'Long' ? 'dir-active-long' : ''}`}
@@ -620,10 +654,16 @@ export const TradeAssistant: React.FC = () => {
 
           {/* Prices */}
           <div className="input-section">
-            <label className="section-label">Trade Prices</label>
+            <label className="section-label">
+              Trade Prices
+              <Tooltip text="All three prices come from candlestick chart levels. Entry = close of the breakout candle. Stop = wick of the structural swing candle behind the breakout. Target = the next key S/R level (prior swing high for Long, swing low for Short)." />
+            </label>
             <div className="price-grid">
               <div className="price-field">
-                <label>Entry Price ($)</label>
+                <label>
+                  Entry Price ($)
+                  <Tooltip text="The price you plan to enter the trade — typically the close of the breakout candle at the S/R level." />
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -634,7 +674,10 @@ export const TradeAssistant: React.FC = () => {
                 />
               </div>
               <div className="price-field">
-                <label>Stop Loss ($)</label>
+                <label>
+                  Stop Loss ($)
+                  <Tooltip text="A structural price level where you'll exit if wrong. For Swing Point: use the low of the swing candle before the breakout (Long) or swing high (Short). For Back-in-Time: use the low/high of 1–3 candles back." />
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -645,7 +688,10 @@ export const TradeAssistant: React.FC = () => {
                 />
               </div>
               <div className="price-field">
-                <label>Target Price ($)</label>
+                <label>
+                  Target Price ($)
+                  <Tooltip text="Your profit exit — the next significant S/R level. For Long: the prior swing high above the breakout. For Short: the prior swing low below it." />
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -656,7 +702,10 @@ export const TradeAssistant: React.FC = () => {
                 />
               </div>
               <div className="price-field">
-                <label>Account Size ($)</label>
+                <label>
+                  Account Size ($)
+                  <Tooltip text="Your total trading account value. Used to calculate how many shares to buy so you only risk 1–2% of your account on this trade." />
+                </label>
                 <input
                   type="number"
                   step="100"
@@ -671,7 +720,10 @@ export const TradeAssistant: React.FC = () => {
 
           {/* Stop Type */}
           <div className="input-section">
-            <label className="section-label">Stop Type</label>
+            <label className="section-label">
+              Stop Type
+              <Tooltip text="Swing Point: stop is placed at a clear swing high/low — no RRR cap. Back-in-Time (BIT): stop is placed at a candle 1, 2, or 3+ bars before the breakout — tighter stops but RRR is capped to limit overextension." />
+            </label>
             <select
               className="trade-select"
               value={inputs.stopType}
@@ -686,7 +738,10 @@ export const TradeAssistant: React.FC = () => {
 
           {/* Macro Structure — Step 2.1 */}
           <div className="input-section">
-            <label className="section-label">Step 2.1 — Macro Structure</label>
+            <label className="section-label">
+              Step 2.1 — Macro Structure
+              <Tooltip text="Confirm the broader market is trending (higher highs + higher lows for Long, or lower highs + lower lows for Short) AND there is a clear Support/Resistance level visible on the chart." />
+            </label>
             <label className="checkbox-row">
               <input
                 type="checkbox"
@@ -699,7 +754,10 @@ export const TradeAssistant: React.FC = () => {
 
           {/* Breakout — Step 2.2 */}
           <div className="input-section">
-            <label className="section-label">Step 2.2 — Breakout Confirmation</label>
+            <label className="section-label">
+              Step 2.2 — Breakout Confirmation
+              <Tooltip text="A 5BP breakout means the candle closed at least 5 basis points (0.05%) through the S/R level, in the same direction as the macro trend. No breakout = no trade." />
+            </label>
             <label className="checkbox-row">
               <input
                 type="checkbox"
@@ -712,7 +770,10 @@ export const TradeAssistant: React.FC = () => {
 
           {/* Confluence — Step 2.4 */}
           <div className="input-section">
-            <label className="section-label">Step 2.4 — Confluence Type</label>
+            <label className="section-label">
+              Step 2.4 — Confluence Type
+              <Tooltip text="An additional filter that confirms the trade has extra edge. Addon Entry: you're adding to an existing position at a new breakout level. PD Divergence: price and a momentum indicator are diverging at a steep angle, signaling a reversal." />
+            </label>
             <div className="confluence-toggle">
               <button
                 className={`conf-btn ${inputs.confluenceType === 'AddonEntry' ? 'conf-active' : ''}`}
@@ -730,7 +791,10 @@ export const TradeAssistant: React.FC = () => {
 
             {inputs.confluenceType === 'AddonEntry' && (
               <div className="price-field" style={{ marginTop: '1rem' }}>
-                <label>Previous Entry Price ($)</label>
+                <label>
+                  Previous Entry Price ($)
+                  <Tooltip text="Your original entry price from the first position in this stock. The new entry must be at least 0.5% away from this price to avoid doubling up at nearly the same level." />
+                </label>
                 <input
                   type="number"
                   step="0.01"
@@ -744,7 +808,10 @@ export const TradeAssistant: React.FC = () => {
 
             {inputs.confluenceType === 'PDDivergence' && (
               <div className="price-field" style={{ marginTop: '1rem' }}>
-                <label>Divergence Angle (°)</label>
+                <label>
+                  Divergence Angle (°)
+                  <Tooltip text="The angle between the price trend line and the momentum indicator line. Long trades require ≥ 45°, Short trades require ≥ 65°. Measure visually on your chart — a steeper angle means stronger divergence." />
+                </label>
                 <input
                   type="number"
                   step="1"
@@ -770,7 +837,9 @@ export const TradeAssistant: React.FC = () => {
             <>
               {/* Signal Badge */}
               <div className={`signal-badge ${statusClass}`}>
-                <span className="signal-status">{result.status}</span>
+                <span className="signal-status">
+                  {calcSymbol ? `${calcSymbol} — ${result.status}` : result.status}
+                </span>
                 <span className="signal-sub">
                   {result.direction} · RRR {result.rrr.toFixed(2)} · Risk {result.riskPercent}%
                 </span>
@@ -834,6 +903,7 @@ export const TradeAssistant: React.FC = () => {
                 {showJson && (
                   <pre className="json-output">
                     {JSON.stringify({
+                      ...(calcSymbol ? { Symbol: calcSymbol } : {}),
                       Status: result.status,
                       Timestamp: new Date().toISOString(),
                       Direction: result.direction,
