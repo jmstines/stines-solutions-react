@@ -295,6 +295,14 @@ export const TradeAssistant: React.FC = () => {
 
       {/* Tab switcher */}
       <div className="trade-tabs">
+        {isAdmin && (
+          <button
+            className={`trade-tab ${activeTab === 'watchlist' ? 'trade-tab-active' : ''}`}
+            onClick={() => setActiveTab('watchlist')}
+          >
+            📋 Watchlist
+          </button>
+        )}
         <button
           className={`trade-tab ${activeTab === 'scanner' ? 'trade-tab-active' : ''}`}
           onClick={() => setActiveTab('scanner')}
@@ -307,14 +315,6 @@ export const TradeAssistant: React.FC = () => {
         >
           🧮 Calculator
         </button>
-        {isAdmin && (
-          <button
-            className={`trade-tab ${activeTab === 'watchlist' ? 'trade-tab-active' : ''}`}
-            onClick={() => setActiveTab('watchlist')}
-          >
-            📋 Watchlist
-          </button>
-        )}
       </div>
 
       {/* ── SCANNER TAB ── */}
