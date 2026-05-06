@@ -47,6 +47,23 @@ const StepCard: React.FC<StepCardProps> = ({ label, detail, pass }) => (
   </div>
 );
 
+function getTodayET(): string {
+  const etDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const y = etDate.getFullYear();
+  const m = String(etDate.getMonth() + 1).padStart(2, '0');
+  const d = String(etDate.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function getMinDateET(): string {
+  const etDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  etDate.setDate(etDate.getDate() - 30);
+  const y = etDate.getFullYear();
+  const m = String(etDate.getMonth() + 1).padStart(2, '0');
+  const d = String(etDate.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export const TradeAssistant: React.FC = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
@@ -55,6 +72,7 @@ export const TradeAssistant: React.FC = () => {
   const [showJson, setShowJson] = useState(false);
 
   // Scanner state
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayET());
   const [scanData, setScanData] = useState<TradeSignalsResponse | null>(null);
   const [scanLoading, setScanLoading] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
@@ -83,12 +101,20 @@ export const TradeAssistant: React.FC = () => {
     try {
       const data = await getTradeSignals(date);
       setScanData(data);
+      // Sync picker to the date the backend actually resolved to (may differ when falling back)
+      setSelectedDate(data.marketDate);
     } catch (err) {
       setScanError(err instanceof Error ? err.message : 'Failed to load scan results');
     } finally {
       setScanLoading(false);
     }
   }, []);
+
+  const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+    if (date) loadScanResults(date);
+  }, [loadScanResults]);
 
   const handleRunScan = useCallback(async () => {
     setScanRunning(true);
@@ -97,7 +123,7 @@ export const TradeAssistant: React.FC = () => {
       const result = await runScan();
       console.log(`Scan dispatched: ${result.totalTickers} tickers, runId=${result.scanRunId}`);
       // Refresh results after a short delay to pick up the _META_ processing record
-      setTimeout(() => loadScanResults(), 2000);
+      setTimeout(() => loadScanResults(getTodayET()), 2000);
     } catch (err) {
       setScanError(err instanceof Error ? err.message : 'Failed to start scan');
     } finally {
@@ -280,42 +306,55 @@ export const TradeAssistant: React.FC = () => {
       {activeTab === 'scanner' && (
         <div className="scanner-panel">
           <div className="scanner-header">
-            <div>
+            <div className="scanner-header-left">
+              <div className="scanner-date-row">
+                <label className="scanner-date-label" htmlFor="scanner-date-picker">
+                  Market date:
+                </label>
+                <input
+                  id="scanner-date-picker"
+                  type="date"
+                  className="scanner-date-picker"
+                  value={selectedDate}
+                  min={getMinDateET()}
+                  max={getTodayET()}
+                  onChange={handleDateChange}
+                  disabled={scanLoading}
+                />
+              </div>
               {scanData && (
-                <p className="scanner-date">
-                  Market date: <strong>{scanData.marketDate}</strong>
-                  {' · '}
-                  <span className={`scan-status scan-status-${scanData.scanStatus}`}>
-                    {scanData.scanStatus === 'completed' && '✓ Scan complete'}
-                    {scanData.scanStatus === 'processing' && '⏳ Scan in progress'}
-                    {scanData.scanStatus === 'failed' && '✗ Scan failed'}
-                    {scanData.scanStatus === 'no_data' && 'No scan data yet'}
-                  </span>
-                  {scanData.scannedAt && (
-                    <span className="scanner-time">
-                      {' · '}scanned at {new Date(scanData.scannedAt).toLocaleTimeString()}
-                    </span>
-                  )}
-                </p>
+                <span className={`scan-status scan-status-${scanData.scanStatus}`}>
+                  {scanData.scanStatus === 'completed' && '✓ Scan complete'}
+                  {scanData.scanStatus === 'processing' && '⏳ Scan in progress'}
+                  {scanData.scanStatus === 'failed' && '✗ Scan failed'}
+                  {scanData.scanStatus === 'no_data' && 'No scan data'}
+                </span>
+              )}
+              {scanData?.scannedAt && (
+                <span className="scanner-time">
+                  scanned at {new Date(scanData.scannedAt).toLocaleTimeString()}
+                </span>
               )}
             </div>
-            <button
-              className="scan-refresh-btn"
-              onClick={() => loadScanResults()}
-              disabled={scanLoading}
-            >
-              {scanLoading ? '⏳ Loading…' : '↻ Refresh'}
-            </button>
-            {isAdmin && (
+            <div className="scanner-header-actions">
               <button
-                className="scan-run-btn"
-                onClick={handleRunScan}
-                disabled={scanRunning}
-                title="Dispatch a scan of the current watchlist"
+                className="scan-refresh-btn"
+                onClick={() => loadScanResults(selectedDate)}
+                disabled={scanLoading}
               >
-                {scanRunning ? '⏳ Dispatching…' : '▶ Run Scan Now'}
+                {scanLoading ? '⏳ Loading…' : '↻ Refresh'}
               </button>
-            )}
+              {isAdmin && (
+                <button
+                  className="scan-run-btn"
+                  onClick={handleRunScan}
+                  disabled={scanRunning}
+                  title="Dispatch a scan of the current watchlist"
+                >
+                  {scanRunning ? '⏳ Dispatching…' : '▶ Run Scan Now'}
+                </button>
+              )}
+            </div>
           </div>
 
           {scanError && (
@@ -328,7 +367,7 @@ export const TradeAssistant: React.FC = () => {
 
           {!scanLoading && !scanError && scanData?.scanStatus === 'no_data' && (
             <div className="scan-empty">
-              <p>No scan data for today. The scanner runs automatically on market days at 5 PM ET.{isAdmin && ' Or click "Run Scan Now" to trigger it manually.'}</p>
+              <p>No scan data for {selectedDate}.{selectedDate === getTodayET() ? ` The scanner runs automatically on market days at 5 PM ET.${isAdmin ? ' Or click "Run Scan Now" to trigger it manually.' : ''}` : ' Try a different date or check back after the scanner runs.'}</p>
             </div>
           )}
 
