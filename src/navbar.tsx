@@ -123,7 +123,7 @@ export default function Navbar() {
 
                     {/* Tools dropdown */}
                     {user && (
-                        <div className="nav-top-menu games-menu" ref={toolsMenuRef}>
+                        <div className="nav-top-menu games-menu tools-menu" ref={toolsMenuRef}>
                             <button
                                 className="games-menu-button"
                                 onClick={() => setShowToolsDropdown(!showToolsDropdown)}

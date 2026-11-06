@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from "react-router-dom"
 import Navbar from "./navbar"
 import { Router } from "./router";
 import { AuthProvider } from "./contexts/AuthContext";
+import './design-system.css';
   
 export function WrappedApp() {
   return (
