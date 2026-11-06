@@ -1,16 +1,5 @@
-* {
-  padding: 0;
-  box-sizing: border-box;
-  font-family: inherit;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 :root {
   --themeColor: 29, 161, 242;
-  /* Theme Color in (R,G,B) format */
 }
 
 html {
@@ -18,289 +7,89 @@ html {
   scroll-behavior: smooth;
 }
 
-  /* 75em === 1200px */
-@media (max-width: 75em) {
-  html {
-    font-size: 60%;
-  }
-}
-
-/* 56.25em === 900px */
-@media (max-width: 56.25em) {
-  html {
-    font-size: 62.5%; /* keep readable on tablets — was 58% */
-  }
-}
-
-/* 37.5em === 600px */
-@media (max-width: 37.5em) {
-  html {
-    font-size: 62.5%; /* keep readable on phones — was 56% */
-  }
-
-  /* Tighten nav so items fit better at narrow widths */
-  .nav-top {
-    padding: 0.75rem 0;
-    flex-wrap: wrap;
-    gap: 0;
-  }
-
-  .nav-top a,
-  .nav-button {
-    padding: 0.75rem 0.875rem;
-    letter-spacing: 0;
-  }
-
-  .user-menu-button {
-    padding: 0.75rem;
-  }
-}
-  
 body {
   margin: 0;
   font-family: 'PT Sans', sans-serif;
 }
 
-/* Full-height flex fill for pages like /chat */
-.page-fill-height {
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.container {
-  margin: 1rem;
-  text-align: center;
-}
-
-.main-container {
-  max-width: 120rem;
-  margin: 5rem auto 0;
-  width: 90%;
-  flex: 1;
-  min-height: 0;    /* required: lets flex child shrink so overflow-y works */
-  overflow-y: auto;
-}
-
-.nav-container {
-  max-width: 120rem;
-  margin: auto;
-  width: 90%;
-}
-
-.nav-top-main {
-  float: left;
-}
-
-.nav-top-menu {
-  float: right;
-}
-
-.nav-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 1.3rem;
-  font-family: inherit;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  color: white;
-  display: flex;
-  align-items: center;
-  float: right;
-  margin: 0;
-  text-decoration: none;
-  height: 100%;
-}
-
-.nav-button:hover {
-  text-decoration: underline;
-}
-
-.nav-top {
-  background-color: #333;
-  color: white;
-  box-shadow: 0 10px 100px -5px #eee;
-  display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: 2.5rem 0;
-}
-
-.site-title {
-  font-size: 2rem;
-}
-  
-.nav-top ul {
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  display: float;
-  gap: 1rem;
-}
-
-.nav-top a {
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  color: inherit;
-  text-decoration: none;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  padding: 1.3rem;
-}
-  
-.nav-top li.active {
-  background-color: #555;
-}
-
-.nav-top li:hover {
-  background-color: #777;
-}
-
-.text-primary {
-  font-size: 1.9rem;
-  color: #444;
-  line-height: 1.6;
-}
-
-.text-primary span {
-  margin-bottom: 1.5rem;
-  display: block;
-}
-
-.text-primary span:last-child {
-  margin-bottom: 0;
-}
-
-.business-logo-font {
-  /* Replace 'Roboto Slab' with the name of your special font */
-  font-family: 'Roboto Slab', serif;
-  
-  /* You can also adjust other properties here: */
-  font-weight: 700; /* Use a bold weight for a logo */
-  font-size: 1.5rem; /* Make it stand out */
-  color: #ffffff; /* Set a specific color */
-}
-/* User Menu Dropdown */
-.user-menu {
-  position: relative;
-}
-
-.user-menu-button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 1.3rem;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.2s;
-}
-
-.user-menu-button:hover {
-  background-color: #555;
-}
-
-.user-icon {
-  width: 24px;
-  height: 24px;
-}
+.user-menu,
+.games-menu { position: relative; }
 
 .user-dropdown {
   position: absolute;
-  right: 0;
   top: 100%;
-  margin-top: 0.5rem;
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  min-width: 200px;
+  right: 0;
   z-index: 1000;
+  min-width: 20rem;
+  margin-top: 0.5rem;
   overflow: hidden;
+  background: #fff;
 }
 
 .user-dropdown-header {
   padding: 1rem 1.25rem;
-  background-color: #f3f4f6;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .user-name {
   display: block;
+  font-size: 1.3rem;
   font-weight: 600;
-  color: #111827;
-  font-size: 0.95rem;
 }
 
 .user-role {
   display: block;
-  font-size: 0.8rem;
-  color: #6b7280;
-  text-transform: capitalize;
   margin-top: 0.25rem;
+  font-size: 1.2rem;
+  text-transform: capitalize;
 }
 
-.user-dropdown-divider {
-  height: 1px;
-  background-color: #e5e7eb;
-}
+.user-dropdown-divider { height: 1px; background: #e5e7eb; }
 
 .user-dropdown-item {
-  width: 100%;
-  padding: 0.75rem 1.25rem;
-  background: none;
-  border: none;
-  color: #333 !important;
-  font-size: 0.95rem;
-  text-align: left;
-  cursor: pointer;
   display: flex;
+  width: 100%;
   align-items: center;
   gap: 0.75rem;
-  transition: background-color 0.2s;
+  padding: 0.9rem 1.25rem;
+  border: 0;
+  background: transparent;
+  color: #33414b !important;
+  cursor: pointer;
+  text-align: left;
   text-decoration: none;
 }
 
-.user-dropdown-item:hover {
-  background-color: #f3f4f6;
-}
-
-.dropdown-icon {
-  width: 18px;
-  height: 18px;
-}
-
-/* Games Menu Dropdown */
-.games-menu {
-  position: relative;
-}
+.user-dropdown-item:hover { background: #f3f6f8; }
+.dropdown-icon { width: 1.8rem; height: 1.8rem; }
 
 .games-menu-button {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 1.3rem;
-  font-size: 1.6rem;
-  letter-spacing: 1px;
-  font-family: inherit;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  transition: background-color 0.2s;
 }
 
-.games-menu-button:hover {
-  background-color: #555;
+.games-chevron { flex-shrink: 0; transition: transform 0.2s; }
+.games-chevron.open { transform: rotate(180deg); }
+
+.text-primary {
+  font-size: 1.9rem;
+  line-height: 1.6;
 }
 
-.games-chevron {
-  transition: transform 0.2s;
-  flex-shrink: 0;
+.text-primary span { display: block; margin-bottom: 1.5rem; }
+.text-primary span:last-child { margin-bottom: 0; }
+
+.business-logo-font {
+  font-family: 'Roboto Slab', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
 }
 
-.games-chevron.open {
-  transform: rotate(180deg);
+@media (max-width: 75em) {
+  html { font-size: 60%; }
+}
+
+@media (max-width: 56.25em) {
+  html { font-size: 62.5%; }
 }
